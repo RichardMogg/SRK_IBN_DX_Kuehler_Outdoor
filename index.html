@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>Inbetriebnahmeprotokoll DX Kühler Outdoor</title>
+
+  <link rel="stylesheet" href="css/app.css">
+
+  <script src="js/form-config.js?v=20260505-01" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+  <script src="vendor/html2pdf.bundle.min.js" defer></script>
+  <script src="js/app.js?v=20260505-01" defer></script>
+</head>
+
+<body>
+  <header>
+    <div class="logo-wrap">
+      <img class="logo" src="assets/Schrack-Technik_LOGO.svg" alt="Schrack Technik Logo">
+    </div>
+    <h1>Inbetriebnahmeprotokoll DX Kühler Outdoor</h1>
+    <div class="subtitle">Lokale browserbasierte Web-App</div>
+    <div class="version">SCHRACK DX OUTDOOR V1.0 – JSON-Import, Exportprüfung, PDF aus Druckansicht</div>
+  </header>
+
+  <main>
+    <div id="status" class="status"></div>
+    <div id="editBanner" class="edit-banner"></div>
+
+    <details class="section" id="sectionStammdaten" open>
+      <summary>
+        <span>1. Stammdaten<span class="summary-sub" id="summaryStammdaten">Kunde und Objektanschrift</span></span>
+      </summary>
+      <div class="section-body">
+        <div class="grid">
+          <div class="field">
+            <label for="kundeInput">Kunde <span class="required-hint">*</span></label>
+            <input id="kundeInput" required autocomplete="off">
+          </div>
+
+          <div class="field">
+            <label for="objektInput">Objektanschrift <span class="required-hint">*</span></label>
+            <input id="objektInput" required autocomplete="off">
+          </div>
+        </div>
+
+        <button type="button" class="btn-secondary" id="saveStammdatenButton">Stammdaten speichern</button>
+      </div>
+    </details>
+
+    <form id="protocolForm" autocomplete="off">
+      <details class="section" id="sectionKopfdaten">
+        <summary>
+          <span>2. Kopfdaten<span class="summary-sub" id="summaryKopfdaten">Anlagenerrichter, Anlagentyp, Datum, Techniker</span></span>
+        </summary>
+
+        <div class="section-body" id="kopfdatenFields">
+          <div class="grid">
+            <div class="field">
+              <label>Anlagenerrichter</label>
+              <input data-field="anlagenerrichter" autocomplete="off">
+            </div>
+
+            <div class="field">
+              <label>Anlagentyp <span class="required-hint">*</span></label>
+              <input data-field="anlagentyp" required autocomplete="off">
+            </div>
+
+            <div class="field">
+              <label>Datum <span class="required-hint">*</span></label>
+              <input type="date" data-field="datum" required>
+            </div>
+
+            <div class="field">
+              <label>Uhrzeit</label>
+              <input type="time" data-field="uhrzeit">
+            </div>
+
+            <div class="field">
+              <label>Techniker <span class="required-hint">*</span></label>
+              <input data-field="techniker" required autocomplete="off">
+            </div>
+
+            <div class="field">
+              <label>Erstinbetriebnahme</label>
+              <input data-field="erstinbetriebnahme" autocomplete="off">
+            </div>
+
+            <div class="field full">
+              <label>Wiederholte Inbetriebnahme</label>
+              <input data-field="wiederholteInbetriebnahme" autocomplete="off">
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details class="section" id="sectionGeraete">
+        <summary>
+          <span>3. Gerätedaten<span class="summary-sub" id="summaryGeraete">Außengerät und Rackkühlgerät(e)</span></span>
+        </summary>
+
+        <div class="section-body" id="geraeteFields">
+          <div class="grid">
+            <div class="field">
+              <label>Modelbezeichnung Außengerät</label>
+              <input data-field="modellAussengeraet" autocomplete="off">
+            </div>
+
+            <div class="field">
+              <label>Seriennummer Außengerät</label>
+              <input data-field="seriennummerAussengeraet" autocomplete="off">
+            </div>
+
+            <div class="field">
+              <label>Modelbezeichnung Rackkühlgerät(-e)</label>
+              <input data-field="modellRackkuehlgeraet" autocomplete="off">
+            </div>
+
+            <div class="field">
+              <label>Seriennummer Rackkühlgerät(-e)</label>
+              <input data-field="seriennummerRackkuehlgeraet" autocomplete="off">
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details class="section" id="sectionInbetriebnahmeinhalt">
+        <summary>
+          <span>4. Inbetriebnahmeinhalt<span class="summary-sub">Montage, Anschluss, Dichtheit, Füllung, Parametrierung, Testlauf</span></span>
+        </summary>
+
+        <div class="section-body">
+          <table class="check-table" id="inbetriebnahmeTable">
+            <thead>
+              <tr>
+                <th>Inhalt</th>
+                <th>Ja</th>
+                <th>Nein</th>
+                <th>Wert / Hinweis</th>
+              </tr>
+            </thead>
+            <tbody id="inbetriebnahmeBody"></tbody>
+          </table>
+        </div>
+      </details>
+
+      <details class="section" id="sectionSpannung">
+        <summary>
+          <span>5. Spannungsversorgung<span class="summary-sub">Absicherung, Drehfeld, Kommunikationsleitung, Stromaufnahme</span></span>
+        </summary>
+
+        <div class="section-body" id="spannungFields">
+          <div class="grid">
+            <div class="field">
+              <label>Reparaturschalter am AG angebracht</label>
+              <div class="radio-row">
+                <label class="radio-card"><input type="radio" name="reparaturschalterAg" value="Ja"> Ja</label>
+                <label class="radio-card"><input type="radio" name="reparaturschalterAg" value="Nein"> Nein</label>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Absicherung Art/A</label>
+              <input data-field="absicherungArtA" autocomplete="off">
+            </div>
+
+            <div class="field">
+              <label>Drehfeld prüfen</label>
+              <select data-field="drehfeldPruefen">
+                <option value="">Auswählen</option>
+                <option value="geprüft">geprüft</option>
+                <option value="nicht geprüft">nicht geprüft</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label>Spannungsversorgung AG prüfen</label>
+              <select data-field="spannungsversorgungAgPruefen">
+                <option value="">Auswählen</option>
+                <option value="geprüft">geprüft</option>
+                <option value="nicht geprüft">nicht geprüft</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label>Kommunikationsleitung zum AG geprüft</label>
+              <div class="radio-row">
+                <label class="radio-card"><input type="radio" name="kommunikationsleitungAg" value="i.O."> i.O.</label>
+                <label class="radio-card"><input type="radio" name="kommunikationsleitungAg" value="n.i.O."> n.i.O.</label>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Stromaufnahme [A]</label>
+              <input type="number" step="0.01" inputmode="decimal" data-field="stromaufnahmeA">
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details class="section" id="sectionKaeltekreislauf">
+        <summary>
+          <span>6. Kältekreislauf<span class="summary-sub">Rackkühlgeräte, Leistung, Leitungslänge, Höhendifferenz, Isolierung</span></span>
+        </summary>
+
+        <div class="section-body" id="kaeltekreislaufFields">
+          <div class="grid">
+            <div class="field">
+              <label>Anzahl der angeschlossenen Rackkühlgeräte [Stk.]</label>
+              <input type="number" min="0" step="1" data-field="anzahlRackkuehlgeraete">
+            </div>
+
+            <div class="field">
+              <label>Gesamtleistung [kW]</label>
+              <input type="number" step="0.01" inputmode="decimal" data-field="gesamtleistungKw">
+            </div>
+
+            <div class="field">
+              <label>Außengerät höher/tiefer als Innengerät</label>
+              <select data-field="aussengeraetPosition">
+                <option value="">Auswählen</option>
+                <option value="höher">höher</option>
+                <option value="tiefer">tiefer</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label>Positionsdifferenz [m]</label>
+              <input type="number" step="0.01" inputmode="decimal" data-field="positionsdifferenzM">
+            </div>
+
+            <div class="field">
+              <label>Höhendifferenz Innen-/Außengerät [m]</label>
+              <input type="number" step="0.01" inputmode="decimal" data-field="hoehendifferenzM">
+            </div>
+
+            <div class="field">
+              <label>Leitungslänge u. Dim. Innen-/Außengerät</label>
+              <input data-field="leitungslaengeUndDimension" autocomplete="off">
+            </div>
+
+            <div class="field">
+              <label>Mit Stickstoff gelötet</label>
+              <div class="radio-row">
+                <label class="radio-card"><input type="radio" name="mitStickstoffGeloetet" value="Ja"> Ja</label>
+                <label class="radio-card"><input type="radio" name="mitStickstoffGeloetet" value="Nein"> Nein</label>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Isolierte Saug- und Flüssigkeitsleitung</label>
+              <div class="radio-row">
+                <label class="radio-card"><input type="radio" name="isolierteSaugFluessigkeitsleitung" value="Ja"> Ja</label>
+                <label class="radio-card"><input type="radio" name="isolierteSaugFluessigkeitsleitung" value="Nein"> Nein</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details class="section" id="sectionTestbetrieb">
+        <summary>
+          <span>7. Testbetrieb Manometerdruck<span class="summary-sub">nach 15 Minuten</span></span>
+        </summary>
+
+        <div class="section-body" id="testbetriebFields">
+          <div class="grid">
+            <div class="field">
+              <label>Testbetrieb</label>
+              <select data-field="testbetrieb">
+                <option value="">Auswählen</option>
+                <option value="Kühlen">Kühlen</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label>Kabel-Check</label>
+              <div class="radio-row">
+                <label class="radio-card"><input type="radio" name="kabelCheck" value="Ja"> Ja</label>
+                <label class="radio-card"><input type="radio" name="kabelCheck" value="Nein"> Nein</label>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Hochdruck Temperatur [°C]</label>
+              <input type="number" step="0.01" inputmode="decimal" data-field="testHochdruckTempC">
+            </div>
+
+            <div class="field">
+              <label>Hochdruck Druck [bar]</label>
+              <input type="number" step="0.01" inputmode="decimal" data-field="testHochdruckDruckBar">
+            </div>
+
+            <div class="field">
+              <label>Niederdruck Temperatur [°C]</label>
+              <input type="number" step="0.01" inputmode="decimal" data-field="testNiederdruckTempC">
+            </div>
+
+            <div class="field">
+              <label>Niederdruck Druck [bar]</label>
+              <input type="number" step="0.01" inputmode="decimal" data-field="testNiederdruckDruckBar">
+            </div>
+
+            <div class="field">
+              <label>Außentemperatur [°C]</label>
+              <input type="number" step="0.01" inputmode="decimal" data-field="aussentemperaturC">
+            </div>
+
+            <div class="field">
+              <label>Ausblastemperatur [°C]</label>
+              <input type="number" step="0.01" inputmode="decimal" data-field="ausblastemperaturC">
+            </div>
+
+            <div class="field full">
+              <label>Erfolgreicher Testbetrieb</label>
+              <div class="radio-row">
+                <label class="radio-card"><input type="radio" name="erfolgreicherTestbetrieb" value="Ja"> Ja</label>
+                <label class="radio-card"><input type="radio" name="erfolgreicherTestbetrieb" value="Nein"> Nein</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details class="section" id="sectionDichtheit">
+        <summary>
+          <span>8. Dichtheitsprüfung<span class="summary-sub">Druckmanometer, Prüfdruck, Prüfzeit, Evakuierung, Prüfmedium</span></span>
+        </summary>
+
+        <div class="section-body" id="dichtheitFields">
+          <div class="grid">
+            <div class="field">
+              <label>Dichtheitsprüfung mit Druckmanometer</label>
+              <div class="radio-row">
+                <label class="radio-card"><input type="radio" name="dichtheitspruefungDruckmanometer" value="Ja"> Ja</label>
+                <label class="radio-card"><input type="radio" name="dichtheitspruefungDruckmanometer" value="Nein"> Nein</label>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Prüfdruck [bar]</label>
+              <input type="number" step="0.01" inputmode="decimal" data-field="pruefdruckBar">
+            </div>
+
+            <div class="field">
+              <label>Prüfzeit [Std]</label>
+              <input type="number" step="0.01" inputmode="decimal" data-field="pruefzeitStd">
+            </div>
+
+            <div class="field">
+              <label>Evakuierungszeit [Std]</label>
+              <input type="number" step="0.01" inputmode="decimal" data-field="evakuierungszeitStd">
+            </div>
+
+            <div class="field full">
+              <label>Prüfmedium</label>
+              <input data-field="pruefmedium" autocomplete="off">
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details class="section" id="sectionKuehlbetrieb">
+        <summary>
+          <span>9. Im Kühlbetrieb<span class="summary-sub">nach 15 Minuten Betrieb</span></span>
+        </summary>
+
+        <div class="section-body" id="kuehlbetriebFields">
+          <div class="grid">
+            <div class="field">
+              <label>Hochdruck Temperatur [°C]</label>
+              <input type="number" step="0.01" inputmode="decimal" data-field="kuehlHochdruckTempC">
+            </div>
+
+            <div class="field">
+              <label>Hochdruck Druck [bar]</label>
+              <input type="number" step="0.01" inputmode="decimal" data-field="kuehlHochdruckDruckBar">
+            </div>
+
+            <div class="field">
+              <label>Niederdruck Temperatur [°C]</label>
+              <input type="number" step="0.01" inputmode="decimal" data-field="kuehlNiederdruckTempC">
+            </div>
+
+            <div class="field">
+              <label>Niederdruck Druck [bar]</label>
+              <input type="number" step="0.01" inputmode="decimal" data-field="kuehlNiederdruckDruckBar">
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details class="section" id="sectionKaeltemittel">
+        <summary>
+          <span>10. Kältemittel und Füllmenge<span class="summary-sub" id="summaryKaeltemittel">Kältemittel, Nachfüllmenge, Gesamtfüllmenge</span></span>
+        </summary>
+
+        <div class="section-body" id="kaeltemittelFields">
+          <div class="grid">
+            <div class="field">
+              <label>Kältemittel</label>
+              <select id="kaeltemittelSelect" data-field="kaeltemittel">
+                <option value="">Kältemittel auswählen</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label>Kältemittelnachfüllmenge [kg]</label>
+              <input type="number" step="0.001" inputmode="decimal" data-field="kaeltemittelNachfuellmengeKg">
+            </div>
+
+            <div class="field">
+              <label>Gesamtfüllmenge [kg]</label>
+              <input type="number" step="0.001" inputmode="decimal" data-field="gesamtfuellmengeKg">
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details class="section" id="sectionErgebnis">
+        <summary>
+          <span>11. Inbetriebnahmeergebnis<span class="summary-sub" id="summaryErgebnis">Erfolgreich, Folgetermin, Abbruch</span></span>
+        </summary>
+
+        <div class="section-body" id="ergebnisFields">
+          <div class="grid">
+            <div class="field">
+              <label>Erfolgreich abgeschlossen</label>
+              <div class="radio-row">
+                <label class="radio-card"><input type="radio" name="erfolgreichAbgeschlossen" value="Ja"> Ja</label>
+                <label class="radio-card"><input type="radio" name="erfolgreichAbgeschlossen" value="Nein"> Nein</label>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Folgetermin nötig</label>
+              <div class="radio-row">
+                <label class="radio-card"><input type="radio" name="folgeterminNoetig" value="Ja"> Ja</label>
+                <label class="radio-card"><input type="radio" name="folgeterminNoetig" value="Nein"> Nein</label>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Folgetermin / Hinweis</label>
+              <input data-field="folgeterminHinweis" autocomplete="off">
+            </div>
+
+            <div class="field">
+              <label>Abgebrochen</label>
+              <div class="radio-row">
+                <label class="radio-card"><input type="radio" name="abgebrochen" value="Ja"> Ja</label>
+                <label class="radio-card"><input type="radio" name="abgebrochen" value="Nein"> Nein</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details class="section" id="sectionZusatz">
+        <summary>
+          <span>12. Zusatzplatinen / Komponenten<span class="summary-sub">Verwendung, Bezeichnung und Verwendungszweck</span></span>
+        </summary>
+
+        <div class="section-body" id="zusatzFields">
+          <div class="grid">
+            <div class="field full">
+              <label>Verwendung von Zusatzplatinen</label>
+              <div class="radio-row">
+                <label class="radio-card"><input type="radio" name="zusatzplatinenVerwendung" value="Ja"> Ja</label>
+                <label class="radio-card"><input type="radio" name="zusatzplatinenVerwendung" value="Nein"> Nein</label>
+              </div>
+            </div>
+
+            <div class="field full">
+              <label>Bezeichnung und Verwendungszweck</label>
+              <textarea data-field="zusatzplatinenBeschreibung"></textarea>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details class="section" id="sectionDokumentation">
+        <summary>
+          <span>13. Anlagendokumentation / Einweisung<span class="summary-sub">Übergabe, Einweisung, Betreiber</span></span>
+        </summary>
+
+        <div class="section-body" id="dokumentationFields">
+          <div class="grid">
+            <div class="field">
+              <label>Übergabe und Dokumentation an den Betreiber</label>
+              <div class="radio-row">
+                <label class="radio-card"><input type="radio" name="uebergabeDokumentationBetreiber" value="Ja"> Ja</label>
+                <label class="radio-card"><input type="radio" name="uebergabeDokumentationBetreiber" value="Nein"> Nein</label>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Einweisung Betreiber</label>
+              <div class="radio-row">
+                <label class="radio-card"><input type="radio" name="einweisungBetreiber" value="Ja"> Ja</label>
+                <label class="radio-card"><input type="radio" name="einweisungBetreiber" value="Nein"> Nein</label>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Name Betreiber</label>
+              <input data-field="nameBetreiber" autocomplete="off">
+            </div>
+
+            <div class="field">
+              <label>Ort</label>
+              <input data-field="ort" autocomplete="off">
+            </div>
+
+            <div class="field full">
+              <label>Ort / Datum Text</label>
+              <input data-field="ortDatumText" autocomplete="off" placeholder="z. B. Wien am 05.05.2026">
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details class="section" id="sectionBemerkungen">
+        <summary>
+          <span>14. Bemerkungen<span class="summary-sub" id="summaryBemerkungen">keine Bemerkung</span></span>
+        </summary>
+
+        <div class="section-body">
+          <div class="field">
+            <label for="bemerkungenText">Bemerkungen</label>
+            <textarea id="bemerkungenText"></textarea>
+          </div>
+        </div>
+      </details>
+
+      <details class="section" id="sectionFotos">
+        <summary>
+          <span>15. Fotos<span class="summary-sub" id="summaryFotos">Allgemeiner Fotobereich</span></span>
+        </summary>
+
+        <div class="section-body">
+          <div class="field">
+            <label for="fotoInput">Fotos auswählen / aufnehmen</label>
+            <input id="fotoInput" type="file" accept="image/*" multiple>
+            <div class="small-text">Fotos werden beim Übernehmen in der Protokollliste für den ZIP-Export zwischengespeichert. Einzelne Fotos können vor dem Übernehmen wieder gelöscht werden. Nach Browser-Neuladen oder JSON-Import müssen Fotodateien erneut ausgewählt und das Protokoll erneut übernommen werden.</div>
+          </div>
+          <div class="photo-list" id="photoList">Keine Fotos ausgewählt.</div>
+        </div>
+      </details>
+
+      <details class="section" id="sectionUnterschrift">
+        <summary>
+          <span>16. Stempel / Signatur<span class="summary-sub" id="summaryUnterschrift">Name und Finger-Unterschrift</span></span>
+        </summary>
+
+        <div class="section-body">
+          <div class="field">
+            <label for="signTechnikerInput">Name / Signaturgeber <span class="required-hint">*</span></label>
+            <input id="signTechnikerInput" required autocomplete="off">
+          </div>
+
+          <div class="signature-wrap">
+            <canvas id="signatureCanvas" width="1000" height="300"></canvas>
+            <div class="button-grid">
+              <button type="button" class="btn-light" id="clearSignatureButton">Unterschrift löschen</button>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details class="section" id="sectionListe">
+        <summary>
+          <span>17. Protokollliste<span class="summary-sub" id="summaryListe">Noch kein Protokoll übernommen</span></span>
+        </summary>
+
+        <div class="section-body">
+          <div id="protocolList"></div>
+          <div class="button-grid">
+            <button type="button" class="btn-brand" id="takeProtocolButton">Protokoll in Liste übernehmen</button>
+            <button type="button" class="btn-light" id="clearFormButton">Formular leeren</button>
+          </div>
+        </div>
+      </details>
+
+      <details class="section" id="sectionExport">
+        <summary>
+          <span>18. Export / Import<span class="summary-sub">ZIP exportieren oder JSON importieren</span></span>
+        </summary>
+
+        <div class="section-body">
+          <div class="button-grid">
+            <button type="button" class="btn-brand" id="exportZipButton">ZIP aller Protokolle exportieren</button>
+            <button type="button" class="btn-secondary" id="importJsonButton">JSON importieren</button>
+            <input id="importJsonInput" type="file" accept=".json,application/json" style="display:none">
+            <button type="button" class="btn-light" id="saveDraftButton">Entwurf speichern</button>
+            <button type="button" class="btn-danger" id="clearAllButton">Alles löschen</button>
+          </div>
+
+          <div class="small-text">Der ZIP enthält protokolle.json, protokolle.csv sowie je Protokoll eine Druckansicht, eine daraus erzeugte PDF-Datei und Fotos. Die Unterschrift ist im Protokoll eingebettet und wird nicht als separate Bilddatei exportiert. Beim JSON-Import werden Fotodateien nicht wiederhergestellt.</div>
+        </div>
+      </details>
+
+      <div class="bottom-actions">
+        <button type="button" class="btn-brand" id="bottomTakeButton">Übernehmen</button>
+        <button type="button" class="btn-secondary" id="bottomTopButton">Nach oben</button>
+      </div>
+    </form>
+  </main>
+
+  <footer>Inbetriebnahmeprotokoll DX Kühler Outdoor</footer>
+</body>
+</html>
