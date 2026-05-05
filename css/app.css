@@ -2,10 +2,10 @@
 
 :root {
   /* Schrack-Farbschema – Annahme auf Basis Logo-Farbwirkung */
-  --schrack-yellow: #ffd200;
-  --schrack-yellow-dark: #d6ad00;
-  --schrack-yellow-light: #fff4bf;
-  --schrack-yellow-soft: #fff9dc;
+  --schrack-yellow: #0066ff;
+  --schrack-yellow-dark: #2e00d6;
+  --schrack-yellow-light: #bff8ff;
+  --schrack-yellow-soft: #dce7ff;
   --schrack-black: #111111;
   --schrack-dark: #1f2933;
   --schrack-gray: #6b7280;
