@@ -1320,14 +1320,14 @@ function askExportCleanupChoice() {
     box.style.boxShadow = '0 12px 40px rgba(0,0,0,0.35)';
     box.style.fontFamily = 'Arial, sans-serif';
     box.style.color = '#111111';
-    box.style.borderTop = '8px solid #ffd200';
+    box.style.borderTop = '8px solid #003cff';
 
     box.innerHTML =
       '<div style="font-size:20px;font-weight:900;margin-bottom:8px;color:#111111;">Export abgeschlossen</div>' +
       '<div style="font-size:15px;line-height:1.4;margin-bottom:16px;color:#1f2933;">Soll das Formular jetzt komplett geleert werden oder sollen die Daten erhalten bleiben?</div>' +
       '<div style="display:grid;grid-template-columns:1fr;gap:10px;">' +
         '<button type="button" id="exportClearButton" style="min-height:52px;border:0;border-radius:12px;background:#111111;color:#ffd200;font-size:16px;font-weight:900;">Leeren</button>' +
-        '<button type="button" id="exportKeepButton" style="min-height:52px;border:1px solid #d6ad00;border-radius:12px;background:#ffd200;color:#111111;font-size:16px;font-weight:900;">Daten behalten</button>' +
+        '<button type="button" id="exportKeepButton" style="min-height:52px;border:1px solid #006fd6;border-radius:12px;background:#ffd200;color:#111111;font-size:16px;font-weight:900;">Daten behalten</button>' +
       '</div>';
 
     overlay.appendChild(box);
@@ -1799,13 +1799,13 @@ function buildPdfExportCssOverrides() {
     'body{font-family:Arial,sans-serif!important;font-size:12px!important;color:#111111!important;}',
     '.print-page{width:794px!important;min-height:1123px!important;margin:0!important;padding:38px!important;box-sizing:border-box!important;background:#ffffff!important;overflow:visible!important;}',
     '.print-content{width:100%!important;box-sizing:border-box!important;}',
-    '.logo{border-bottom:5px solid #ffd200!important;}',
-    '.sec{background:#fff4bf!important;color:#111111!important;border:1px solid #d6ad00!important;border-left:7px solid #111111!important;}',
-    '.box{border:1px solid #cbd5e1!important;border-left:5px solid #ffd200!important;background:#ffffff!important;}',
+    '.logo{border-bottom:5px solid #00d9ff!important;}',
+    '.sec{background:#fff4bf!important;color:#111111!important;border:1px solid #00cfd6!important;border-left:7px solid #111111!important;}',
+    '.box{border:1px solid #cbd5e1!important;border-left:5px solid #006eff!important;background:#ffffff!important;}',
     'th{background:#ffd200!important;color:#111111!important;}',
     'tr:nth-child(even) td{background:#fff9dc!important;}',
-    '.sig{background:#fff9dc!important;border:1px solid #d6ad00!important;}',
-    '.foot{border-top:3px solid #ffd200!important;color:#6b7280!important;}',
+    '.sig{background:#fff9dc!important;border:1px solid #000ed6!important;}',
+    '.foot{border-top:3px solid #002fff!important;color:#6b7280!important;}',
     'table{page-break-inside:auto!important;}',
     'tr{page-break-inside:avoid!important;}',
     '*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}',
