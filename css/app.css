@@ -2,10 +2,10 @@
 
 :root {
   /* Schrack-Farbschema – Annahme auf Basis Logo-Farbwirkung */
-  --schrack-yellow: #0066ff;
-  --schrack-yellow-dark: #2e00d6;
-  --schrack-yellow-light: #bff8ff;
-  --schrack-yellow-soft: #dce7ff;
+  --schrack-yellow: #ffd200;
+  --schrack-yellow-dark: #d6ad00;
+  --schrack-yellow-light: #fff4bf;
+  --schrack-yellow-soft: #fff9dc;
   --schrack-black: #111111;
   --schrack-dark: #1f2933;
   --schrack-gray: #6b7280;
@@ -28,10 +28,14 @@
   --ok-text: var(--schrack-black);
   --err-bg: #fee2e2;
   --err-text: #991b1b;
-  --open-bg: var(--schrack-yellow-light);
+  --open-bg: var(--section-blue);
   --closed-bg: #f8fafc;
   --edit-bg: var(--schrack-yellow-soft);
   --edit-text: var(--schrack-black);
+
+  --section-blue: #dbeafe;
+  --section-blue-border: #93c5fd;
+  --section-blue-dark: #1e3a8a;
 }
 
 html,
@@ -119,7 +123,7 @@ main {
   display: block;
   background: var(--ok-bg);
   color: var(--ok-text);
-  border: 2px solid var(--brand);
+  border: 2px solid #ffd200;
 }
 
 .status.error {
@@ -161,9 +165,9 @@ details.section > summary {
 }
 
 details.section[open] > summary {
-  background: var(--open-bg);
-  border-bottom: 1px solid var(--border);
-  border-left-color: var(--brand);
+  background: var(--section-blue);
+  border-bottom: 1px solid var(--section-blue-border);
+  border-left-color: var(--section-blue-dark);
 }
 
 details.section > summary::-webkit-details-marker { display: none; }
@@ -339,7 +343,7 @@ button {
 }
 
 .check-table th {
-  background: var(--schrack-yellow-light);
+  background: var(--section-blue);
   color: var(--schrack-black);
   font-weight: 900;
   text-align: left;
