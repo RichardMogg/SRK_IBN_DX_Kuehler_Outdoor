@@ -1305,7 +1305,7 @@ function askExportCleanupChoice() {
     overlay.style.position = 'fixed';
     overlay.style.inset = '0';
     overlay.style.zIndex = '9999';
-    overlay.style.background = 'rgba(15, 23, 42, 0.55)';
+    overlay.style.background = 'rgba(17, 17, 17, 0.68)';
     overlay.style.display = 'flex';
     overlay.style.alignItems = 'center';
     overlay.style.justifyContent = 'center';
@@ -1319,14 +1319,15 @@ function askExportCleanupChoice() {
     box.style.padding = '18px';
     box.style.boxShadow = '0 12px 40px rgba(0,0,0,0.35)';
     box.style.fontFamily = 'Arial, sans-serif';
-    box.style.color = '#111827';
+    box.style.color = '#111111';
+    box.style.borderTop = '8px solid #ffd200';
 
     box.innerHTML =
-      '<div style="font-size:20px;font-weight:900;margin-bottom:8px;">Export abgeschlossen</div>' +
-      '<div style="font-size:15px;line-height:1.4;margin-bottom:16px;">Soll das Formular jetzt komplett geleert werden oder sollen die Daten erhalten bleiben?</div>' +
+      '<div style="font-size:20px;font-weight:900;margin-bottom:8px;color:#111111;">Export abgeschlossen</div>' +
+      '<div style="font-size:15px;line-height:1.4;margin-bottom:16px;color:#1f2933;">Soll das Formular jetzt komplett geleert werden oder sollen die Daten erhalten bleiben?</div>' +
       '<div style="display:grid;grid-template-columns:1fr;gap:10px;">' +
-        '<button type="button" id="exportClearButton" style="min-height:52px;border:0;border-radius:12px;background:#dc2626;color:#fff;font-size:16px;font-weight:900;">Leeren</button>' +
-        '<button type="button" id="exportKeepButton" style="min-height:52px;border:0;border-radius:12px;background:#dbeafe;color:#1e3a8a;font-size:16px;font-weight:900;">Daten behalten</button>' +
+        '<button type="button" id="exportClearButton" style="min-height:52px;border:0;border-radius:12px;background:#111111;color:#ffd200;font-size:16px;font-weight:900;">Leeren</button>' +
+        '<button type="button" id="exportKeepButton" style="min-height:52px;border:1px solid #d6ad00;border-radius:12px;background:#ffd200;color:#111111;font-size:16px;font-weight:900;">Daten behalten</button>' +
       '</div>';
 
     overlay.appendChild(box);
@@ -1491,24 +1492,25 @@ function normalizeSvgForInline(svgText) {
 function buildPrintHtml(data) {
   data = data || {};
 
-  var css = [
+    var css = [
     'html,body{margin:0;padding:0;background:#ffffff}',
-    'body{font-family:Arial,sans-serif;font-size:12px;color:#111;background:#ffffff}',
+    'body{font-family:Arial,sans-serif;font-size:12px;color:#111111;background:#ffffff}',
     '.print-page{position:relative;width:210mm;min-height:297mm;margin:0 auto;padding:10mm;box-sizing:border-box;background:#ffffff;overflow:visible}',
     '.print-content{position:relative;z-index:1;width:100%;box-sizing:border-box}',
-    '.logo{text-align:center;margin-bottom:8px}',
-    '.logo svg{max-width:210px;height:auto;display:inline-block}',
-    '.logo img{max-width:210px;height:auto;display:inline-block}',
-    'h1{text-align:center;font-size:20px;margin:0 0 14px 0}',
-    '.box{border:1px solid #111;padding:8px;margin-bottom:10px;break-inside:avoid}',
+    '.logo{text-align:center;margin-bottom:8px;padding-bottom:6px;border-bottom:5px solid #ffd200}',
+    '.logo svg{max-width:220px;height:auto;display:inline-block}',
+    '.logo img{max-width:220px;height:auto;display:inline-block}',
+    'h1{text-align:center;font-size:20px;margin:0 0 14px 0;color:#111111;font-weight:900}',
+    '.box{border:1px solid #cbd5e1;border-left:5px solid #ffd200;padding:8px;margin-bottom:10px;break-inside:avoid;background:#ffffff}',
     '.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}',
-    '.sec{font-weight:bold;background:#fff4b8;border:1px solid #111;padding:5px;margin:10px 0 0 0}',
+    '.sec{font-weight:bold;background:#fff4bf;color:#111111;border:1px solid #d6ad00;border-left:7px solid #111111;padding:5px;margin:10px 0 0 0}',
     'table{width:100%;border-collapse:collapse;margin-bottom:10px;break-inside:auto}',
-    'th,td{border:1px solid #111;padding:5px;vertical-align:top}',
-    'th{background:#eeeeee;text-align:left}',
-    '.sig{height:95px;border:1px solid #111;margin-top:8px;display:flex;align-items:center;justify-content:center;background:#fff}',
+    'th,td{border:1px solid #cbd5e1;padding:5px;vertical-align:top}',
+    'th{background:#ffd200;color:#111111;text-align:left;font-weight:900}',
+    'tr:nth-child(even) td{background:#fff9dc}',
+    '.sig{height:95px;border:1px solid #d6ad00;margin-top:8px;display:flex;align-items:center;justify-content:center;background:#fff9dc}',
     '.sig img{max-height:90px;max-width:100%}',
-    '.foot{font-size:10px;text-align:center;margin-top:14px;color:#333}',
+    '.foot{font-size:10px;text-align:center;margin-top:14px;color:#6b7280;border-top:3px solid #ffd200;padding-top:6px}',
     '@media print{.print-page{margin:0}}'
   ].join('');
 
@@ -1794,9 +1796,16 @@ function buildPdfExportCssOverrides() {
   return [
     '<style id="pdf-export-overrides">',
     'html,body{width:794px!important;margin:0!important;padding:0!important;overflow:visible!important;background:#ffffff!important;}',
-    'body{font-family:Arial,sans-serif!important;font-size:12px!important;color:#111!important;}',
+    'body{font-family:Arial,sans-serif!important;font-size:12px!important;color:#111111!important;}',
     '.print-page{width:794px!important;min-height:1123px!important;margin:0!important;padding:38px!important;box-sizing:border-box!important;background:#ffffff!important;overflow:visible!important;}',
     '.print-content{width:100%!important;box-sizing:border-box!important;}',
+    '.logo{border-bottom:5px solid #ffd200!important;}',
+    '.sec{background:#fff4bf!important;color:#111111!important;border:1px solid #d6ad00!important;border-left:7px solid #111111!important;}',
+    '.box{border:1px solid #cbd5e1!important;border-left:5px solid #ffd200!important;background:#ffffff!important;}',
+    'th{background:#ffd200!important;color:#111111!important;}',
+    'tr:nth-child(even) td{background:#fff9dc!important;}',
+    '.sig{background:#fff9dc!important;border:1px solid #d6ad00!important;}',
+    '.foot{border-top:3px solid #ffd200!important;color:#6b7280!important;}',
     'table{page-break-inside:auto!important;}',
     'tr{page-break-inside:avoid!important;}',
     '*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}',

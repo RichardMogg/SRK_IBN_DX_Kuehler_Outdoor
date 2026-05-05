@@ -1,29 +1,37 @@
 * { box-sizing: border-box; }
 
 :root {
-  --bg: #f2f4f7;
+  /* Schrack-Farbschema – Annahme auf Basis Logo-Farbwirkung */
+  --schrack-yellow: #ffd200;
+  --schrack-yellow-dark: #d6ad00;
+  --schrack-yellow-light: #fff4bf;
+  --schrack-yellow-soft: #fff9dc;
+  --schrack-black: #111111;
+  --schrack-dark: #1f2933;
+  --schrack-gray: #6b7280;
+  --schrack-gray-light: #e5e7eb;
+  --schrack-border: #cbd5e1;
+
+  --bg: #f4f4f2;
   --card: #ffffff;
-  --text: #111827;
-  --muted: #64748b;
-  --border: #cbd5e1;
-  --brand: #ffd200;
-  --brand-dark: #c9a400;
-  --ok: #92d050;
-  --warn: #ffff00;
-  --bad: #ff0000;
-  --primary: #111827;
-  --secondary: #e5e7eb;
+  --text: var(--schrack-black);
+  --muted: var(--schrack-gray);
+  --border: var(--schrack-border);
+
+  --brand: var(--schrack-yellow);
+  --brand-dark: var(--schrack-yellow-dark);
+  --primary: var(--schrack-black);
+  --secondary: var(--schrack-gray-light);
   --danger: #dc2626;
-  --blue: #dbeafe;
-  --blue-text: #1e3a8a;
-  --ok-bg: #dcfce7;
-  --ok-text: #166534;
+
+  --ok-bg: var(--schrack-yellow-soft);
+  --ok-text: var(--schrack-black);
   --err-bg: #fee2e2;
   --err-text: #991b1b;
-  --open-bg: #fff9cf;
+  --open-bg: var(--schrack-yellow-light);
   --closed-bg: #f8fafc;
-  --edit-bg: #fef3c7;
-  --edit-text: #92400e;
+  --edit-bg: var(--schrack-yellow-soft);
+  --edit-text: var(--schrack-black);
 }
 
 html,
@@ -48,9 +56,10 @@ footer,
 
 header {
   background: #ffffff;
-  border-bottom: 3px solid var(--brand);
+  border-bottom: 5px solid var(--brand);
   padding: 12px 12px 10px;
   text-align: center;
+  box-shadow: 0 2px 10px rgba(17, 17, 17, 0.08);
 }
 
 .logo-wrap {
@@ -62,8 +71,8 @@ header {
 }
 
 .logo {
-  max-width: 220px;
-  max-height: 74px;
+  max-width: 230px;
+  max-height: 78px;
   display: block;
 }
 
@@ -72,12 +81,14 @@ h1 {
   font-size: 22px;
   line-height: 1.15;
   font-weight: 900;
+  color: var(--schrack-black);
 }
 
 .subtitle {
   margin-top: 4px;
   font-size: 13px;
   font-weight: 800;
+  color: var(--schrack-dark);
 }
 
 .version {
@@ -99,7 +110,7 @@ main {
   padding: 12px;
   border-radius: 12px;
   margin-bottom: 10px;
-  font-weight: 800;
+  font-weight: 900;
   white-space: pre-wrap;
   line-height: 1.35;
 }
@@ -108,21 +119,21 @@ main {
   display: block;
   background: var(--ok-bg);
   color: var(--ok-text);
-  border: 1px solid #86efac;
+  border: 2px solid var(--brand);
 }
 
 .status.error {
   display: block;
   background: var(--err-bg);
   color: var(--err-text);
-  border: 1px solid #fca5a5;
+  border: 2px solid #fca5a5;
 }
 
 .edit-banner.active {
   display: block;
   background: var(--edit-bg);
   color: var(--edit-text);
-  border: 1px solid #fbbf24;
+  border: 2px solid var(--brand);
 }
 
 details.section {
@@ -131,7 +142,7 @@ details.section {
   border-radius: 14px;
   margin-bottom: 10px;
   overflow: hidden;
-  box-shadow: 0 1px 5px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 1px 5px rgba(17, 17, 17, 0.08);
 }
 
 details.section > summary {
@@ -146,11 +157,13 @@ details.section > summary {
   justify-content: space-between;
   align-items: center;
   gap: 10px;
+  border-left: 6px solid transparent;
 }
 
 details.section[open] > summary {
   background: var(--open-bg);
   border-bottom: 1px solid var(--border);
+  border-left-color: var(--brand);
 }
 
 details.section > summary::-webkit-details-marker { display: none; }
@@ -160,8 +173,8 @@ details.section > summary::after {
   width: 28px;
   height: 28px;
   border-radius: 999px;
-  background: var(--primary);
-  color: #ffffff;
+  background: var(--schrack-black);
+  color: var(--brand);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -197,6 +210,7 @@ details.section[open] > summary::after { content: "–"; }
   margin-bottom: 5px;
   font-size: 13px;
   font-weight: 900;
+  color: var(--schrack-black);
 }
 
 input,
@@ -209,6 +223,15 @@ textarea {
   font: inherit;
   background: #ffffff;
   color: var(--text);
+  accent-color: var(--brand);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--brand-dark);
+  box-shadow: 0 0 0 3px rgba(255, 210, 0, 0.35);
 }
 
 textarea {
@@ -248,19 +271,21 @@ button {
 
 .btn-brand {
   background: var(--brand);
-  color: #111827;
+  color: var(--schrack-black);
+  border: 1px solid var(--brand-dark);
 }
 
 .btn-brand:hover { background: var(--brand-dark); }
 
 .btn-secondary {
-  background: var(--primary);
-  color: #ffffff;
+  background: var(--schrack-black);
+  color: var(--brand);
 }
 
 .btn-light {
   background: var(--secondary);
-  color: #111827;
+  color: var(--schrack-black);
+  border: 1px solid var(--border);
 }
 
 .btn-danger {
@@ -269,8 +294,9 @@ button {
 }
 
 .btn-warning {
-  background: #f59e0b;
-  color: #111827;
+  background: var(--brand);
+  color: var(--schrack-black);
+  border: 1px solid var(--brand-dark);
 }
 
 .radio-row {
@@ -291,6 +317,11 @@ button {
   font-weight: 800;
 }
 
+.radio-card:has(input:checked) {
+  background: var(--schrack-yellow-soft);
+  border-color: var(--brand-dark);
+}
+
 .radio-card input { width: auto; }
 
 .check-table {
@@ -308,7 +339,8 @@ button {
 }
 
 .check-table th {
-  background: #f8fafc;
+  background: var(--schrack-yellow-light);
+  color: var(--schrack-black);
   font-weight: 900;
   text-align: left;
 }
@@ -316,6 +348,7 @@ button {
 .check-table input[type="radio"] {
   width: auto;
   transform: scale(1.15);
+  accent-color: var(--brand);
 }
 
 .table-input {
@@ -324,10 +357,10 @@ button {
 }
 
 .photo-list {
-  border: 1px dashed var(--border);
+  border: 1px dashed var(--brand-dark);
   border-radius: 12px;
   padding: 10px;
-  background: #f8fafc;
+  background: var(--schrack-yellow-soft);
   min-height: 46px;
   font-size: 14px;
   color: var(--muted);
@@ -361,10 +394,10 @@ button {
 }
 
 .signature-wrap {
-  border: 1px solid var(--border);
+  border: 1px solid var(--brand-dark);
   border-radius: 14px;
   padding: 10px;
-  background: #f8fafc;
+  background: var(--schrack-yellow-soft);
 }
 
 #signatureCanvas {
@@ -379,16 +412,18 @@ button {
 
 .protocol-list-item {
   border: 1px solid var(--border);
+  border-left: 6px solid var(--brand);
   border-radius: 12px;
   padding: 10px;
-  background: #f8fafc;
+  background: #ffffff;
   margin-bottom: 8px;
   line-height: 1.35;
 }
 
 .protocol-list-item.editing {
-  border-color: #f59e0b;
-  background: #fffbeb;
+  border-color: var(--brand-dark);
+  border-left-color: var(--schrack-black);
+  background: var(--schrack-yellow-soft);
 }
 
 .protocol-list-item strong {
@@ -401,16 +436,18 @@ button {
   display: inline-block;
   padding: 3px 8px;
   border-radius: 999px;
-  background: var(--blue);
-  color: var(--blue-text);
+  background: var(--schrack-yellow-light);
+  color: var(--schrack-black);
+  border: 1px solid var(--brand-dark);
   font-size: 12px;
   font-weight: 900;
   margin-top: 5px;
 }
 
 .badge-edit {
-  background: var(--edit-bg);
-  color: var(--edit-text);
+  background: var(--schrack-black);
+  color: var(--brand);
+  border-color: var(--schrack-black);
 }
 
 .bottom-actions {
@@ -418,15 +455,16 @@ button {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(255, 255, 255, 0.94);
+  background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(8px);
-  border-top: 1px solid var(--border);
+  border-top: 4px solid var(--brand);
   padding: 10px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
   max-width: 760px;
   margin: 0 auto;
+  box-shadow: 0 -4px 14px rgba(17, 17, 17, 0.08);
 }
 
 footer {
