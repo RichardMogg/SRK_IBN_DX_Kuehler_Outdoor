@@ -127,6 +127,36 @@ function bindEvents() {
     setStatus('Stammdaten gespeichert.', 'ok');
   });
 
+  bindCommissioningDateFields();
+
+  function bindCommissioningDateFields() {
+  var firstDate = document.querySelector('[data-field="erstinbetriebnahme"]');
+  var repeatDate = document.querySelector('[data-field="wiederholteInbetriebnahme"]');
+
+  if (!firstDate || !repeatDate) {
+    return;
+  }
+
+  firstDate.addEventListener('change', function () {
+    if (firstDate.value) {
+      repeatDate.value = '';
+    }
+
+    saveDraft(false);
+    updateSummaries();
+  });
+
+  repeatDate.addEventListener('change', function () {
+    if (repeatDate.value) {
+      firstDate.value = '';
+    }
+
+    saveDraft(false);
+    updateSummaries();
+  });
+}
+
+
   document.getElementById('addInnenButton').addEventListener('click', function () {
     addIndoorUnit(true);
   });
@@ -767,8 +797,7 @@ function getProtocolValidationIssues(data, label) {
   requireValue(issues, prefix, kopfdaten.anlagentyp, 'Anlagentyp fehlt');
   requireValue(issues, prefix, kopfdaten.datumUhrzeit, 'Datum/Uhrzeit fehlt');
   requireValue(issues, prefix, kopfdaten.techniker, 'Techniker fehlt');
-  requireValue(issues, prefix, kopfdaten.erstinbetriebnahme, 'Erstinbetriebnahme fehlt');
-  requireValue(issues, prefix, kopfdaten.wiederholteInbetriebnahme, 'Wiederholte Inbetriebnahme fehlt');
+  validateCommissioningDateChoice(issues, prefix, kopfdaten);
 
   requireValue(issues, prefix, aussen.modell || aussen.type, 'Modellbezeichnung Außengerät fehlt');
   requireValue(issues, prefix, aussen.seriennummer, 'Seriennummer Außengerät fehlt');
@@ -794,6 +823,33 @@ function getProtocolValidationIssues(data, label) {
   }
 
   return issues;
+}
+
+function validateCommissioningDateChoice(issues, prefix, kopfdaten) {
+  var firstDate = String(kopfdaten.erstinbetriebnahme || '').trim();
+  var repeatDate = String(kopfdaten.wiederholteInbetriebnahme || '').trim();
+
+  if (!firstDate && !repeatDate) {
+    issues.push(prefix + 'Datum Erstinbetriebnahme oder Datum wiederholte Inbetriebnahme fehlt');
+    return;
+  }
+
+  if (firstDate && repeatDate) {
+    issues.push(prefix + 'Nur ein Datum auswählen: Erstinbetriebnahme oder wiederholte Inbetriebnahme');
+    return;
+  }
+
+  if (firstDate && !isIsoDate(firstDate)) {
+    issues.push(prefix + 'Datum Erstinbetriebnahme ist ungültig');
+  }
+
+  if (repeatDate && !isIsoDate(repeatDate)) {
+    issues.push(prefix + 'Datum wiederholte Inbetriebnahme ist ungültig');
+  }
+}
+
+function isIsoDate(value) {
+  return /^\d{4}-\d{2}-\d{2}$/.test(String(value || ''));
 }
 
 function requireValue(issues, prefix, value, message) {

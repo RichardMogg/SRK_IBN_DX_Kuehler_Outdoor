@@ -80,25 +80,15 @@
               <input data-field="techniker" required autocomplete="off">
             </div>
 
-            <div class="field">
-              <label>Erstinbetriebnahme <span class="required-hint">*</span></label>
-              <select data-field="erstinbetriebnahme" required>
-                <option value="">Bitte auswählen</option>
-                <option>Ja</option>
-                <option>Nein</option>
-              </select>
-            </div>
-
-            <div class="field">
-              <label>Wiederholte Inbetriebnahme <span class="required-hint">*</span></label>
-              <select data-field="wiederholteInbetriebnahme" required>
-                <option value="">Bitte auswählen</option>
-                <option>Ja</option>
-                <option>Nein</option>
-              </select>
-            </div>
+          <div class="field">
+           <label>Datum Erstinbetriebnahme <span class="required-hint">*</span></label>
+             <input type="date" data-field="erstinbetriebnahme">
           </div>
-        </div>
+
+          <div class="field">
+            <label>Datum wiederholte Inbetriebnahme <span class="required-hint">*</span></label>
+              <input type="date" data-field="wiederholteInbetriebnahme">
+          </div>
       </details>
 
       <details class="section" id="sectionAussen">
@@ -395,7 +385,7 @@
 <script src="js/form-config.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
-<script src="js/app.js?v=1.41" defer></script>
+<script src="js/app.js?v=1.6" defer></script>
 <link rel="stylesheet" href="css/app.css?v=1.1">
 </body>
 </html>
