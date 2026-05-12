@@ -1,24 +1,308 @@
 <!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>Inbetriebnahmeprotokoll DX Kühler Outdoor</title>
+
+  <link rel="stylesheet" href="css/app.css">
+</head>
+
+<body>
+  <div class="page-bg"></div>
+
+  <header>
+    <div class="logo-wrap">
+      <img class="logo" src="assets/logo.svg" alt="Schrack Technik Logo">
+    </div>
+    <h1>Inbetriebnahmeprotokoll DX Kühler Outdoor</h1>
+    <div class="subtitle">Digitales Inbetriebnahmeprotokoll mit JSON-Import, ZIP-Export und PDF-Druckansicht</div>
+    <div class="version">LOKAL V1.0 – Inbetriebnahmeprotokoll</div>
+  </header>
+
+  <main>
+    <div id="status" class="status"></div>
+    <div id="editBanner" class="edit-banner"></div>
+
+    <details class="section" id="sectionStammdaten" open>
+      <summary>
+        <span>
+          1. Stammdaten
+          <span class="summary-sub" id="summaryStammdaten">Kunde und Objektanschrift</span>
+        </span>
+      </summary>
+
+      <div class="section-body">
+        <div class="grid">
+          <div class="field">
+            <label for="kundeInput">Kunde <span class="required-hint">*</span></label>
+            <input id="kundeInput" required autocomplete="off">
+          </div>
+
+          <div class="field">
+            <label for="objektInput">Objektanschrift <span class="required-hint">*</span></label>
+            <input id="objektInput" required autocomplete="off">
+          </div>
+        </div>
+
+        <button type="button" class="btn-secondary" id="saveStammdatenButton">Stammdaten speichern</button>
+      </div>
+    </details>
+
+    <form id="protocolForm" autocomplete="off">
+      <details class="section" id="sectionKopfdaten">
+        <summary>
+          <span>
+            2. Kopfdaten / Anlage
+            <span class="summary-sub" id="summaryKopfdaten">Anlagenerrichter, Anlagentyp, Datum/Uhrzeit, Techniker</span>
+          </span>
+        </summary>
+
+        <div class="section-body" id="kopfdatenFields">
+          <div class="grid">
+            <div class="field">
+              <label>Anlagenerrichter</label>
+              <input data-field="anlagenerrichter" autocomplete="off">
+            </div>
+
+            <div class="field">
+              <label>Anlagentyp <span class="required-hint">*</span></label>
+              <input data-field="anlagentyp" required autocomplete="off" value="DX Kühler Outdoor">
+            </div>
+
+            <div class="field">
+              <label>Datum/Uhrzeit <span class="required-hint">*</span></label>
+              <input type="datetime-local" data-field="datumUhrzeit" required>
+            </div>
+
+            <div class="field">
+              <label>Techniker <span class="required-hint">*</span></label>
+              <input data-field="techniker" required autocomplete="off">
+            </div>
+
+            <div class="field">
+              <label>Erstinbetriebnahme <span class="required-hint">*</span></label>
+              <select data-field="erstinbetriebnahme" required>
+                <option value="">Bitte auswählen</option>
+                <option>Ja</option>
+                <option>Nein</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label>Wiederholte Inbetriebnahme <span class="required-hint">*</span></label>
+              <select data-field="wiederholteInbetriebnahme" required>
+                <option value="">Bitte auswählen</option>
+                <option>Ja</option>
+                <option>Nein</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details class="section" id="sectionAussen">
+        <summary>
+          <span>
+            3. Außengerät
+            <span class="summary-sub" id="summaryAussen">Modellbezeichnung Außengerät / Seriennummer</span>
+          </span>
+        </summary>
+
+        <div class="section-body">
+          <div class="grid">
+            <div class="field">
+              <label for="aussenTypeInput">Modellbezeichnung Außengerät <span class="required-hint">*</span></label>
+              <input id="aussenTypeInput" required autocomplete="off">
+            </div>
+
+            <div class="field">
+              <label for="aussenSeriennummerInput">Seriennummer <span class="required-hint">*</span></label>
+              <input id="aussenSeriennummerInput" required autocomplete="off">
+            </div>
+          </div>
+
+          <h2 class="subheading">Inbetriebnahmeinhalt</h2>
+          <div id="checkInbetriebnahme"></div>
+
+          <div class="field">
+            <label for="aussenFotoInput">Fotos Außengerät</label>
+            <input id="aussenFotoInput" type="file" accept="image/*" multiple>
+            <div class="small-text">Fotos zum Außengerät werden beim Übernehmen für den ZIP-Export zwischengespeichert.</div>
+          </div>
+
+          <div class="photo-list" id="aussenPhotoList">Keine Fotos ausgewählt.</div>
+        </div>
+      </details>
+
+      <details class="section" id="sectionInnen">
+        <summary>
+          <span>
+            4. Rückkühlgerät(e)
+            <span class="summary-sub" id="summaryInnen">Dynamisch erweiterbar</span>
+          </span>
+        </summary>
+
+        <div class="section-body">
+          <div id="innenContainer"></div>
+          <button type="button" class="btn-secondary" id="addInnenButton">+ Rückkühlgerät hinzufügen</button>
+        </div>
+      </details>
+
+      <details class="section" id="sectionKaeltekreislauf">
+        <summary>
+          <span>
+            5. Kältekreislauf
+            <span class="summary-sub">Leistung, Höhen, Leitungslänge, Lötung, Isolierung</span>
+          </span>
+        </summary>
+
+        <div class="section-body">
+          <div id="fieldsKaeltekreislauf"></div>
+        </div>
+      </details>
+
+      <details class="section" id="sectionDichtheit">
+        <summary>
+          <span>
+            6. Dichtheitsprüfung
+            <span class="summary-sub">Prüfdruck, Prüfzeit, Evakuierung, Prüfmedium</span>
+          </span>
+        </summary>
+
+        <div class="section-body">
+          <div id="fieldsDichtheit"></div>
+        </div>
+      </details>
+
+      <details class="section" id="sectionKaeltemittel">
+        <summary>
+          <span>
+            7. Kältemittel und Füllmenge
+            <span class="summary-sub">Kältemittel, Nachfüllmenge, Gesamtfüllmenge</span>
+          </span>
+        </summary>
+
+        <div class="section-body">
+          <div class="grid">
+            <div class="field">
+              <label>Kältemittel</label>
+              <select data-special="kaeltemittel" id="kaeltemittelSelect">
+                <option value="">Kältemittel auswählen</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label>Kältemittelnachfüllmenge</label>
+              <div class="input-unit">
+                <input data-special="kaeltemittelNachfuellmenge" inputmode="decimal">
+                <span>kg</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Gesamtfüllmenge</label>
+              <div class="input-unit">
+                <input data-special="gesamtfuellmenge" inputmode="decimal">
+                <span>kg</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details class="section" id="sectionZusatz">
+        <summary>
+          <span>
+            8. Zusatzplatinen / Komponenten
+            <span class="summary-sub">Zusatzplatinen und Verwendungszweck</span>
+          </span>
+        </summary>
+
+        <div class="section-body">
+          <div id="fieldsZusatz"></div>
+        </div>
+      </details>
+
+      <details class="section" id="sectionSpannung">
+        <summary>
+          <span>
+            9. Spannungsversorgung
+            <span class="summary-sub">Reparaturschalter, Absicherung, Drehfeld, Kommunikation, Stromaufnahme</span>
+          </span>
+        </summary>
+
+        <div class="section-body">
+          <div id="fieldsSpannung"></div>
+        </div>
+      </details>
+
+      <details class="section" id="sectionTestbetrieb">
+        <summary>
+          <span>
+            10. Testbetrieb / Manometerdruck
+            <span class="summary-sub">Kühlbetrieb, Drücke, Temperaturen</span>
+          </span>
+        </summary>
+
+        <div class="section-body">
+          <div id="fieldsTestbetrieb"></div>
+        </div>
+      </details>
+
+      <details class="section" id="sectionErgebnis">
+        <summary>
+          <span>
+            11. Inbetriebnahmeergebnis
+            <span class="summary-sub">Erfolgreich, Folgetermin, Abbruch</span>
+          </span>
+        </summary>
+
+        <div class="section-body">
+          <div id="fieldsErgebnis"></div>
+        </div>
+      </details>
 
       <details class="section" id="sectionDokumentation">
-        <summary><span>12. Anlagendokumentation / Einweisung<span class="summary-sub" id="summaryDokumentation">Übergabe, Einweisung, Betreiber</span></span></summary>
-        <div class="section-body"><div id="fieldsDokumentation"></div></div>
+        <summary>
+          <span>
+            12. Anlagendokumentation / Einweisung
+            <span class="summary-sub">Übergabe, Einweisung, Betreiber</span>
+          </span>
+        </summary>
+
+        <div class="section-body">
+          <div id="fieldsDokumentation"></div>
+        </div>
       </details>
 
       <details class="section" id="sectionFotos">
-        <summary><span>13. Fotos/Dateien<span class="summary-sub" id="summaryFotos">Allgemeiner Fotos-/Dateibereich</span></span></summary>
+        <summary>
+          <span>
+            13. Fotos/Dateien
+            <span class="summary-sub" id="summaryFotos">Allgemeiner Fotos-/Dateibereich</span>
+          </span>
+        </summary>
+
         <div class="section-body">
           <div class="field">
             <label for="fotoInput">Fotos/Dateien auswählen</label>
             <input id="fotoInput" type="file" multiple>
-            <div class="small-text">Allgemeine Fotos und beliebige Dateien werden beim Übernehmen für den ZIP-Export zwischengespeichert. Nach Browser-Neuladen oder JSON-Import müssen Dateien erneut ausgewählt und das Protokoll erneut übernommen werden.</div>
+            <div class="small-text">Allgemeine Fotos und Dateien werden beim Übernehmen für den ZIP-Export zwischengespeichert.</div>
           </div>
+
           <div class="photo-list" id="photoList">Keine Fotos/Dateien ausgewählt.</div>
         </div>
       </details>
 
       <details class="section" id="sectionBemerkungen">
-        <summary><span>14. Bemerkungen<span class="summary-sub" id="summaryBemerkungen">keine Bemerkung</span></span></summary>
+        <summary>
+          <span>
+            14. Bemerkungen
+            <span class="summary-sub" id="summaryBemerkungen">keine Bemerkung</span>
+          </span>
+        </summary>
+
         <div class="section-body">
           <div class="field">
             <label for="bemerkungenText">Bemerkungen</label>
@@ -28,18 +312,26 @@
       </details>
 
       <details class="section" id="sectionUnterschrift">
-        <summary><span>15. Stempel / Signatur<span class="summary-sub" id="summaryUnterschrift">Techniker, Unterschrift, Ort/Datum</span></span></summary>
+        <summary>
+          <span>
+            15. Stempel / Signatur
+            <span class="summary-sub" id="summaryUnterschrift">Techniker, Unterschrift, Ort/Datum</span>
+          </span>
+        </summary>
+
         <div class="section-body">
           <div class="grid">
             <div class="field">
               <label for="signTechnikerInput">Technikername <span class="required-hint">*</span></label>
               <input id="signTechnikerInput" required autocomplete="off">
             </div>
+
             <div class="field">
               <label for="ortDatumInput">Ort / Datum</label>
               <input id="ortDatumInput" autocomplete="off" placeholder="z. B. Wien, 12.05.2026">
             </div>
           </div>
+
           <div class="signature-wrap">
             <canvas id="signatureCanvas" width="1000" height="300"></canvas>
             <div class="button-grid">
@@ -50,9 +342,16 @@
       </details>
 
       <details class="section" id="sectionListe">
-        <summary><span>16. Protokollliste<span class="summary-sub" id="summaryListe">Noch kein Protokoll übernommen</span></span></summary>
+        <summary>
+          <span>
+            16. Protokollliste
+            <span class="summary-sub" id="summaryListe">Noch kein Protokoll übernommen</span>
+          </span>
+        </summary>
+
         <div class="section-body">
           <div id="protocolList"></div>
+
           <div class="button-grid">
             <button type="button" class="btn-brand" id="takeProtocolButton">Protokoll in Liste übernehmen</button>
             <button type="button" class="btn-light" id="clearFormButton">Formular leeren</button>
@@ -61,7 +360,13 @@
       </details>
 
       <details class="section" id="sectionExport">
-        <summary><span>17. Export / Import<span class="summary-sub">ZIP exportieren oder JSON importieren</span></span></summary>
+        <summary>
+          <span>
+            17. Export / Import
+            <span class="summary-sub">ZIP exportieren oder JSON importieren</span>
+          </span>
+        </summary>
+
         <div class="section-body">
           <div class="button-grid">
             <button type="button" class="btn-brand" id="exportZipButton">ZIP aller Inbetriebnahmeprotokolle exportieren</button>
@@ -70,7 +375,11 @@
             <button type="button" class="btn-light" id="saveDraftButton">Entwurf speichern</button>
             <button type="button" class="btn-danger" id="clearAllButton">Alles löschen</button>
           </div>
-          <div class="small-text">Der ZIP enthält protokolle.json, protokolle.csv sowie je Protokoll eine Druckansicht, eine daraus erzeugte PDF-Datei und Fotos/Dateien. Die Unterschrift ist im Protokoll eingebettet und wird nicht als separate Bilddatei exportiert. Beim JSON-Import werden Fotodateien nicht wiederhergestellt.</div>
+
+          <div class="small-text">
+            Der ZIP enthält protokolle.json, protokolle.csv sowie je Protokoll eine Druckansicht, eine PDF-Datei und Fotos/Dateien.
+            Beim JSON-Import werden Fotodateien nicht wiederhergestellt.
+          </div>
         </div>
       </details>
 
@@ -83,9 +392,9 @@
 
   <footer id="footerText">Inbetriebnahmeprotokoll DX Kühler Outdoor</footer>
 
-  <script src="js/form-config.js?v=20260512-1" defer></script>
+  <script src="js/form-config.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
-  <script src="js/app.js?v=20260512-1" defer></script>
+  <script src="js/app.js" defer></script>
 </body>
 </html>
