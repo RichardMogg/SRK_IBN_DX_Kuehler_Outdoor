@@ -200,8 +200,52 @@ function startAtTop() {
 }
 
 function addCollapseButtons() {
-  addCollapseButtonToDetails('details.section', '.section-body', 'Abschnitt einklappen');
-  addCollapseButtonToDetails('details.indoor-card', '.indoor-body', 'Rückkühlgerät einklappen');
+  addCollapseButtonToDetails(
+    'details.section',
+    '.section-body',
+    'Abschnitt einklappen',
+    'section'
+  );
+
+  addCollapseButtonToDetails(
+    'details.indoor-card',
+    '.indoor-body',
+    'Rückkühlgerät einklappen',
+    'indoor'
+  );
+}
+
+function addCollapseButtonToDetails(detailsSelector, bodySelector, buttonText, targetName) {
+  document.querySelectorAll(detailsSelector).forEach(function (section) {
+    var body = section.querySelector(bodySelector);
+
+    if (!body || hasDirectCollapseButton(body)) {
+      return;
+    }
+
+    var button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'btn-light collapse-section-button';
+    button.setAttribute('data-collapse-button', 'true');
+    button.setAttribute('data-collapse-target', targetName);
+    button.textContent = buttonText;
+
+    button.addEventListener('click', function () {
+      section.open = false;
+      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    body.appendChild(button);
+  });
+}
+
+function hasDirectCollapseButton(body) {
+  return Array.prototype.some.call(body.children, function (child) {
+    return child.getAttribute('data-collapse-button') === 'true' ||
+      child.getAttribute('data-collapse-section') === 'true' ||
+      child.getAttribute('data-collapse-rk') === 'true' ||
+      child.getAttribute('data-collapse-indoor') === 'true';
+  });
 }
 
 function addCollapseButtonToDetails(detailsSelector, bodySelector, buttonText) {
@@ -378,9 +422,10 @@ card.querySelector('[data-collapse-rk="true"]').addEventListener('click', functi
     fillIndoorCard(card, data);
   }
 
-  updateIndoorPhotoList(unitId);
-  renumberIndoorCards();
-  updateSummaries();
+updateIndoorPhotoList(unitId);
+renumberIndoorCards();
+updateSummaries();
+addCollapseButtons();
 }
 
 function fillIndoorCard(card, data) {
