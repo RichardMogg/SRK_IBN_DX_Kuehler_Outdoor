@@ -136,34 +136,6 @@ function bindEvents() {
 
   bindCommissioningDateFields();
 
-  function bindCommissioningDateFields() {
-  var firstDate = document.querySelector('[data-field="erstinbetriebnahme"]');
-  var repeatDate = document.querySelector('[data-field="wiederholteInbetriebnahme"]');
-
-  if (!firstDate || !repeatDate) {
-    return;
-  }
-
-  firstDate.addEventListener('change', function () {
-    if (firstDate.value) {
-      repeatDate.value = '';
-    }
-
-    saveDraft(false);
-    updateSummaries();
-  });
-
-  repeatDate.addEventListener('change', function () {
-    if (repeatDate.value) {
-      firstDate.value = '';
-    }
-
-    saveDraft(false);
-    updateSummaries();
-  });
-}
-
-
   document.getElementById('addInnenButton').addEventListener('click', function () {
     addIndoorUnit(true);
   });
@@ -211,6 +183,33 @@ function bindEvents() {
   document.getElementById('kundeInput').addEventListener('input', throttledDraftSave);
   document.getElementById('objektInput').addEventListener('input', throttledDraftSave);
   document.getElementById('bemerkungenText').addEventListener('input', throttledDraftSave);
+}
+
+function bindCommissioningDateFields() {
+  var firstDate = document.querySelector('[data-field="erstinbetriebnahme"]');
+  var repeatDate = document.querySelector('[data-field="wiederholteInbetriebnahme"]');
+
+  if (!firstDate || !repeatDate) {
+    return;
+  }
+
+  firstDate.addEventListener('change', function () {
+    if (firstDate.value) {
+      repeatDate.value = '';
+    }
+
+    saveDraft(false);
+    updateSummaries();
+  });
+
+  repeatDate.addEventListener('change', function () {
+    if (repeatDate.value) {
+      firstDate.value = '';
+    }
+
+    saveDraft(false);
+    updateSummaries();
+  });
 }
 
 var draftTimer = null;
