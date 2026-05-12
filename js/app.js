@@ -200,10 +200,15 @@ function startAtTop() {
 }
 
 function addCollapseButtons() {
-  document.querySelectorAll('details.section').forEach(function (section) {
-    var body = section.querySelector('.section-body');
+  addCollapseButtonToDetails('details.section', '.section-body', 'Abschnitt einklappen');
+  addCollapseButtonToDetails('details.indoor-card', '.indoor-body', 'Rückkühlgerät einklappen');
+}
 
-    if (!body || body.querySelector('[data-collapse-section="true"]')) {
+function addCollapseButtonToDetails(detailsSelector, bodySelector, buttonText) {
+  document.querySelectorAll(detailsSelector).forEach(function (section) {
+    var body = section.querySelector(bodySelector);
+
+    if (!body || hasDirectCollapseButton(body)) {
       return;
     }
 
@@ -211,7 +216,7 @@ function addCollapseButtons() {
     button.type = 'button';
     button.className = 'btn-light collapse-section-button';
     button.setAttribute('data-collapse-section', 'true');
-    button.textContent = 'Abschnitt einklappen';
+    button.textContent = buttonText;
 
     button.addEventListener('click', function () {
       section.open = false;
@@ -219,6 +224,12 @@ function addCollapseButtons() {
     });
 
     body.appendChild(button);
+  });
+}
+
+function hasDirectCollapseButton(body) {
+  return Array.prototype.some.call(body.children, function (child) {
+    return child.getAttribute('data-collapse-section') === 'true';
   });
 }
 
@@ -331,8 +342,9 @@ function addIndoorUnit(openAfterAdd, data) {
       '</div>' +
       '<div class="field"><label>Fotos Rückkühlgerät</label><input data-rk-photo="true" type="file" accept="image/*" multiple><div class="small-text">Fotos werden beim Übernehmen für den ZIP-Export zwischengespeichert.</div></div>' +
       '<div class="photo-list" data-rk-photo-list="true">Keine Fotos ausgewählt.</div>' +
-      '<button type="button" class="btn-danger" data-remove-rk="true">Rückkühlgerät entfernen</button>' +
-    '</div>';
+'<button type="button" class="btn-danger" data-remove-rk="true">Rückkühlgerät entfernen</button>' +
+'<button type="button" class="btn-light collapse-section-button" data-collapse-rk="true">Rückkühlgerät einklappen</button>' +
+'</div>';
 
   document.getElementById('innenContainer').appendChild(card);
 
@@ -351,7 +363,10 @@ function addIndoorUnit(openAfterAdd, data) {
       setStatus('Mindestens ein Rückkühlgerät bleibt im Formular erhalten.', 'error');
       return;
     }
-
+card.querySelector('[data-collapse-rk="true"]').addEventListener('click', function () {
+  card.open = false;
+  card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
     delete currentIndoorPhotos[unitId];
     card.parentNode.removeChild(card);
     renumberIndoorCards();
