@@ -2190,4 +2190,3 @@ function getErrorText(err) {
 
   return err.message || String(err);
 }
-```
