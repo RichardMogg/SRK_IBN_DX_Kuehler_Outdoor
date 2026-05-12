@@ -1120,17 +1120,28 @@ async function updateAttachmentListFromInput(scope, input, unitId) {
     converted.push(await readFileAsStoredAttachment(files[i]));
   }
 
+  if (!converted.length) {
+    input.value = '';
+    return;
+  }
+
   if (scope === 'allgemein') {
-    currentPhotos = converted;
+    currentPhotos = currentPhotos.concat(converted);
   }
 
   if (scope === 'aussengeraet') {
-    currentAussenPhotos = converted;
+    currentAussenPhotos = currentAussenPhotos.concat(converted);
   }
 
   if (scope === 'rueckkuehlgeraet') {
-    currentIndoorPhotos[unitId] = converted;
+    if (!currentIndoorPhotos[unitId]) {
+      currentIndoorPhotos[unitId] = [];
+    }
+
+    currentIndoorPhotos[unitId] = currentIndoorPhotos[unitId].concat(converted);
   }
+
+  input.value = '';
 
   updateAllAttachmentLists();
   throttledDraftSave();
