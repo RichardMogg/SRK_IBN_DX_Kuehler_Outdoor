@@ -238,7 +238,7 @@ function addCollapseButtons() {
   addCollapseButtonToDetails(
     'details.indoor-card',
     '.indoor-body',
-    'Rückkühlgerät einklappen',
+    'Rackkühlgerät einklappen',
     'indoor'
   );
 }
@@ -404,7 +404,7 @@ function addIndoorUnit(openAfterAdd, data) {
   card.setAttribute('data-unit-id', unitId);
 
   card.innerHTML =
-    '<summary>Rückkühlgerät ' + number + '</summary>' +
+    '<summary>Rackkühlgerät ' + number + '</summary>' +
     '<div class="indoor-body">' +
       '<div class="grid">' +
         '<div class="field"><label>Modellbezeichnung Rückkühlgerät <span class="required-hint">*</span></label><input data-rk-field="modell" required autocomplete="off"></div>' +
@@ -414,8 +414,7 @@ function addIndoorUnit(openAfterAdd, data) {
       '</div>' +
       '<div class="field"><label>Fotos Rückkühlgerät</label><input data-rk-photo="true" type="file" accept="image/*" multiple><div class="small-text">Fotos werden beim Übernehmen für den ZIP-Export zwischengespeichert.</div></div>' +
       '<div class="photo-list" data-rk-photo-list="true">Keine Fotos ausgewählt.</div>' +
-'<button type="button" class="btn-danger" data-remove-rk="true">Rückkühlgerät entfernen</button>' +
-'<button type="button" class="btn-light collapse-section-button" data-collapse-rk="true">Rückkühlgerät einklappen</button>' +
+'<button type="button" class="btn-danger" data-remove-rk="true">Rackkühlgerät entfernen</button>' +
 '</div>';
 
   document.getElementById('innenContainer').appendChild(card);
@@ -435,10 +434,7 @@ function addIndoorUnit(openAfterAdd, data) {
       setStatus('Mindestens ein Rückkühlgerät bleibt im Formular erhalten.', 'error');
       return;
     }
-card.querySelector('[data-collapse-rk="true"]').addEventListener('click', function () {
-  card.open = false;
-  card.scrollIntoView({ behavior: 'smooth', block: 'start' });
-});
+
     delete currentIndoorPhotos[unitId];
     card.parentNode.removeChild(card);
     renumberIndoorCards();
@@ -466,7 +462,7 @@ function fillIndoorCard(card, data) {
 function renumberIndoorCards() {
   document.querySelectorAll('.indoor-card').forEach(function (card, index) {
     var bezeichnung = getInputValue(card.querySelector('[data-rk-field="bezeichnung"]'));
-    card.querySelector('summary').textContent = 'Rückkühlgerät ' + (index + 1) + (bezeichnung ? ' – ' + bezeichnung : '');
+    card.querySelector('summary').textContent = 'Rackkühlgerät ' + (index + 1) + (bezeichnung ? ' – ' + bezeichnung : '');
   });
 }
 
