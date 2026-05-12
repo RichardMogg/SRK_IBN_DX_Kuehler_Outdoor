@@ -1,5 +1,3 @@
-
-```javascript
 'use strict';
 
 var lineBreak = String.fromCharCode(10);
