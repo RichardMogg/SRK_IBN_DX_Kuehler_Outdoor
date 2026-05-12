@@ -407,7 +407,7 @@ function addIndoorUnit(openAfterAdd, data) {
     '<summary>Rackkühlgerät ' + number + '</summary>' +
     '<div class="indoor-body">' +
       '<div class="grid">' +
-        '<div class="field"><label>Modellbezeichnung Rückkühlgerät <span class="required-hint">*</span></label><input data-rk-field="modell" required autocomplete="off"></div>' +
+        '<div class="field"><label>Modellbezeichnung Rackkühlgerät <span class="required-hint">*</span></label><input data-rk-field="modell" required autocomplete="off"></div>' +
         '<div class="field"><label>Seriennummer <span class="required-hint">*</span></label><input data-rk-field="seriennummer" required autocomplete="off"></div>' +
         '<div class="field"><label>Bezeichnung / Standort</label><input data-rk-field="bezeichnung" autocomplete="off"></div>' +
         '<div class="field"><label>Bemerkung</label><input data-rk-field="bemerkung" autocomplete="off"></div>' +
@@ -799,7 +799,7 @@ function getProtocolValidationIssues(data, label) {
   requireValue(issues, prefix, aussen.seriennummer, 'Seriennummer Außengerät fehlt');
 
   (pruefung.rueckkuehlgeraete || []).forEach(function (unit, index) {
-    requireValue(issues, prefix, unit.modell || unit.type, 'Modellbezeichnung Rückkühlgerät ' + (index + 1) + ' fehlt');
+    requireValue(issues, prefix, unit.modell || unit.type, 'Modellbezeichnung Rackkühlgerät ' + (index + 1) + ' fehlt');
     requireValue(issues, prefix, unit.seriennummer, 'Seriennummer Rückkühlgerät ' + (index + 1) + ' fehlt');
   });
 
@@ -1002,7 +1002,7 @@ function updateSummaries() {
   var aussen = getInputValue(document.getElementById('aussenTypeInput'));
 
   document.getElementById('summaryAussen').textContent = aussen || 'Modellbezeichnung Außengerät / Seriennummer';
-  document.getElementById('summaryInnen').textContent = document.querySelectorAll('.indoor-card').length + ' Rückkühlgerät(e)';
+  document.getElementById('summaryInnen').textContent = document.querySelectorAll('.indoor-card').length + ' Rackkühlgerät(e)';
   document.getElementById('summaryBemerkungen').textContent = getInputValue(document.getElementById('bemerkungenText')) ? 'Bemerkung vorhanden' : 'keine Bemerkung';
   document.getElementById('summaryFotos').textContent = (currentPhotos.length + currentAussenPhotos.length + countIndoorFiles()) + ' Datei(en) ausgewählt';
   document.getElementById('summaryUnterschrift').textContent = signatureDirty ? 'Unterschrift vorhanden' : 'Techniker, Unterschrift, Ort/Datum';
@@ -1268,7 +1268,7 @@ function getPhotoExportIssues() {
       }
 
       if ((unit.fotos || []).length && (!found || (found.files || []).length < unit.fotos.length)) {
-        issues.push(prefix + 'Fotos Rückkühlgerät ' + unit.nummer + ' fehlen');
+        issues.push(prefix + 'Fotos Rackkühlgerät ' + unit.nummer + ' fehlen');
       }
     });
   });
