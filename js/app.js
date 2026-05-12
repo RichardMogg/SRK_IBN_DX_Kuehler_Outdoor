@@ -103,25 +103,24 @@ function renderFieldGroup(container, prefix, items) {
         '<label>' + escapeHtml(item.label) + '</label>' +
         '<textarea data-value="true"></textarea>';
     } else {
-      
-      
-var numberAttributes = '';
+      var numberAttributes = '';
 
-if (item.type === 'decimal') {
-  numberAttributes = ' type="number" inputmode="decimal" step="any"';
-} else if (item.type === 'number') {
-  numberAttributes = ' type="number" inputmode="numeric" step="1" min="0"';
-}
+      if (item.type === 'decimal') {
+        numberAttributes = ' type="number" inputmode="decimal" step="any"';
+      } else if (item.type === 'number') {
+        numberAttributes = ' type="number" inputmode="numeric" step="1" min="0"';
+      }
 
-if (item.unit) {
-  row.innerHTML =
-    '<label>' + escapeHtml(item.label) + '</label>' +
-    '<div class="input-unit"><input data-value="true"' + numberAttributes + '><span>' + escapeHtml(item.unit) + '</span></div>';
-} else {
-  row.innerHTML =
-    '<label>' + escapeHtml(item.label) + '</label>' +
-    '<input data-value="true"' + numberAttributes + '>';
-}
+      if (item.unit) {
+        row.innerHTML =
+          '<label>' + escapeHtml(item.label) + '</label>' +
+          '<div class="input-unit"><input data-value="true"' + numberAttributes + '><span>' + escapeHtml(item.unit) + '</span></div>';
+      } else {
+        row.innerHTML =
+          '<label>' + escapeHtml(item.label) + '</label>' +
+          '<input data-value="true"' + numberAttributes + '>';
+      }
+    }
 
     container.appendChild(row);
   });
@@ -249,29 +248,7 @@ function addCollapseButtons() {
   );
 }
 
-function addCollapseButtonToDetails(detailsSelector, bodySelector, buttonText, targetName) {
-  document.querySelectorAll(detailsSelector).forEach(function (section) {
-    var body = section.querySelector(bodySelector);
 
-    if (!body || hasDirectCollapseButton(body)) {
-      return;
-    }
-
-    var button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'btn-light collapse-section-button';
-    button.setAttribute('data-collapse-button', 'true');
-    button.setAttribute('data-collapse-target', targetName);
-    button.textContent = buttonText;
-
-    button.addEventListener('click', function () {
-      section.open = false;
-      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-
-    body.appendChild(button);
-  });
-}
 
 function hasDirectCollapseButton(body) {
   return Array.prototype.some.call(body.children, function (child) {
