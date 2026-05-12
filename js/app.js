@@ -103,18 +103,25 @@ function renderFieldGroup(container, prefix, items) {
         '<label>' + escapeHtml(item.label) + '</label>' +
         '<textarea data-value="true"></textarea>';
     } else {
-      var inputMode = item.type === 'decimal' || item.type === 'number' ? ' inputmode="decimal"' : '';
+      
+      
+var numberAttributes = '';
 
-      if (item.unit) {
-        row.innerHTML =
-          '<label>' + escapeHtml(item.label) + '</label>' +
-          '<div class="input-unit"><input data-value="true"' + inputMode + '><span>' + escapeHtml(item.unit) + '</span></div>';
-      } else {
-        row.innerHTML =
-          '<label>' + escapeHtml(item.label) + '</label>' +
-          '<input data-value="true"' + inputMode + '>';
-      }
-    }
+if (item.type === 'decimal') {
+  numberAttributes = ' type="number" inputmode="decimal" step="any"';
+} else if (item.type === 'number') {
+  numberAttributes = ' type="number" inputmode="numeric" step="1" min="0"';
+}
+
+if (item.unit) {
+  row.innerHTML =
+    '<label>' + escapeHtml(item.label) + '</label>' +
+    '<div class="input-unit"><input data-value="true"' + numberAttributes + '><span>' + escapeHtml(item.unit) + '</span></div>';
+} else {
+  row.innerHTML =
+    '<label>' + escapeHtml(item.label) + '</label>' +
+    '<input data-value="true"' + numberAttributes + '>';
+}
 
     container.appendChild(row);
   });

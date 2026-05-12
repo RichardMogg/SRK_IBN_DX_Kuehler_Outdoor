@@ -45,11 +45,11 @@ var FIELD_GROUPS = {
       type: 'decimal'
     },
     {
-      key: 'leitungslange',
-      label: 'Leitungslänge u. Dim. Innen-/Außengerät',
-      unit: 'm',
-      type: 'text'
-    },
+    key: 'leitungslange',
+    label: 'Leitungslänge u. Dim. Innen-/Außengerät',
+    unit: 'm',
+     type: 'decimal'
+     },
     {
       key: 'mitStickstoffGeloetet',
       label: 'Mit Stickstoff gelötet',
