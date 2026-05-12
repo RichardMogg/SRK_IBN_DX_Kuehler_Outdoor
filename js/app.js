@@ -57,6 +57,10 @@ function renderStaticFields() {
 }
 
 function renderChecklist(container, prefix, items) {
+  if (!container) {
+    return;
+  }
+
   container.innerHTML = '';
 
   items.forEach(function (item) {
@@ -67,8 +71,8 @@ function renderChecklist(container, prefix, items) {
     row.innerHTML =
       '<div class="check-title">' + escapeHtml(item.label) + '</div>' +
       '<div class="check-options">' +
-      '<label class="pill-option"><input type="radio" name="' + prefix + '_' + item.key + '" value="Ja"> Ja</label>' +
-      '<label class="pill-option"><input type="radio" name="' + prefix + '_' + item.key + '" value="Nein"> Nein</label>' +
+        '<label class="pill-option"><input type="radio" name="' + prefix + '_' + item.key + '" value="Ja"> Ja</label>' +
+        '<label class="pill-option"><input type="radio" name="' + prefix + '_' + item.key + '" value="Nein"> Nein</label>' +
       '</div>' +
       '<div class="field"><label>Bemerkung</label><textarea data-check-note="true" placeholder="Optional"></textarea></div>';
 
@@ -77,6 +81,10 @@ function renderChecklist(container, prefix, items) {
 }
 
 function renderFieldGroup(container, prefix, items) {
+  if (!container) {
+    return;
+  }
+
   container.innerHTML = '';
 
   items.forEach(function (item) {
@@ -89,8 +97,8 @@ function renderFieldGroup(container, prefix, items) {
       row.innerHTML =
         '<div class="form-title">' + escapeHtml(item.label) + '</div>' +
         '<div class="bool-options">' +
-        '<label class="pill-option"><input type="radio" name="' + prefix + '_' + item.key + '" value="Ja"> Ja</label>' +
-        '<label class="pill-option"><input type="radio" name="' + prefix + '_' + item.key + '" value="Nein"> Nein</label>' +
+          '<label class="pill-option"><input type="radio" name="' + prefix + '_' + item.key + '" value="Ja"> Ja</label>' +
+          '<label class="pill-option"><input type="radio" name="' + prefix + '_' + item.key + '" value="Nein"> Nein</label>' +
         '</div>';
     } else if (item.type === 'textarea') {
       row.innerHTML =
@@ -252,8 +260,10 @@ function loadRefrigerantOptions() {
     })
     .then(function (text) {
       var selectedValue = select.value;
+
       var items = text
-        .split(/\r?\n/)
+        .replace(/\r/g, '')
+        .split('\n')
         .map(function (line) {
           return line.trim();
         })
@@ -313,15 +323,15 @@ function addIndoorUnit(openAfterAdd, data) {
   card.innerHTML =
     '<summary>Rückkühlgerät ' + number + '</summary>' +
     '<div class="indoor-body">' +
-    '<div class="grid">' +
-    '<div class="field"><label>Modellbezeichnung Rückkühlgerät <span class="required-hint">*</span></label><input data-rk-field="modell" required autocomplete="off"></div>' +
-    '<div class="field"><label>Seriennummer <span class="required-hint">*</span></label><input data-rk-field="seriennummer" required autocomplete="off"></div>' +
-    '<div class="field"><label>Bezeichnung / Standort</label><input data-rk-field="bezeichnung" autocomplete="off"></div>' +
-    '<div class="field"><label>Bemerkung</label><input data-rk-field="bemerkung" autocomplete="off"></div>' +
-    '</div>' +
-    '<div class="field"><label>Fotos Rückkühlgerät</label><input data-rk-photo="true" type="file" accept="image/*" multiple><div class="small-text">Fotos werden beim Übernehmen für den ZIP-Export zwischengespeichert.</div></div>' +
-    '<div class="photo-list" data-rk-photo-list="true">Keine Fotos ausgewählt.</div>' +
-    '<button type="button" class="btn-danger" data-remove-rk="true">Rückkühlgerät entfernen</button>' +
+      '<div class="grid">' +
+        '<div class="field"><label>Modellbezeichnung Rückkühlgerät <span class="required-hint">*</span></label><input data-rk-field="modell" required autocomplete="off"></div>' +
+        '<div class="field"><label>Seriennummer <span class="required-hint">*</span></label><input data-rk-field="seriennummer" required autocomplete="off"></div>' +
+        '<div class="field"><label>Bezeichnung / Standort</label><input data-rk-field="bezeichnung" autocomplete="off"></div>' +
+        '<div class="field"><label>Bemerkung</label><input data-rk-field="bemerkung" autocomplete="off"></div>' +
+      '</div>' +
+      '<div class="field"><label>Fotos Rückkühlgerät</label><input data-rk-photo="true" type="file" accept="image/*" multiple><div class="small-text">Fotos werden beim Übernehmen für den ZIP-Export zwischengespeichert.</div></div>' +
+      '<div class="photo-list" data-rk-photo-list="true">Keine Fotos ausgewählt.</div>' +
+      '<button type="button" class="btn-danger" data-remove-rk="true">Rückkühlgerät entfernen</button>' +
     '</div>';
 
   document.getElementById('innenContainer').appendChild(card);
@@ -768,8 +778,8 @@ function renderProtocolList() {
       (editingIndex === index ? ' <span class="badge badge-edit">Bearbeitung</span>' : '') +
       '<div class="small-text">ID: ' + escapeHtml(record.recordId) + '</div>' +
       '<div class="button-grid">' +
-      '<button type="button" class="btn-secondary" data-edit-record="' + index + '">Bearbeiten</button>' +
-      '<button type="button" class="btn-danger" data-delete-record="' + index + '">Löschen</button>' +
+        '<button type="button" class="btn-secondary" data-edit-record="' + index + '">Bearbeiten</button>' +
+        '<button type="button" class="btn-danger" data-delete-record="' + index + '">Löschen</button>' +
       '</div>';
 
     container.appendChild(item);
@@ -1739,8 +1749,8 @@ function askExportCleanupChoice() {
       '<div style="font-size:20px;font-weight:900;margin-bottom:8px;">Export abgeschlossen</div>' +
       '<div style="font-size:15px;line-height:1.4;margin-bottom:16px;">Soll das Formular jetzt komplett geleert werden oder sollen die Daten erhalten bleiben?</div>' +
       '<div style="display:grid;grid-template-columns:1fr;gap:10px;">' +
-      '<button type="button" id="exportClearButton" style="min-height:52px;border:0;border-radius:12px;background:#dc2626;color:#fff;font-size:16px;font-weight:900;">Leeren</button>' +
-      '<button type="button" id="exportKeepButton" style="min-height:52px;border:0;border-radius:12px;background:#ffd200;color:#111;font-size:16px;font-weight:900;">Daten behalten</button>' +
+        '<button type="button" id="exportClearButton" style="min-height:52px;border:0;border-radius:12px;background:#dc2626;color:#fff;font-size:16px;font-weight:900;">Leeren</button>' +
+        '<button type="button" id="exportKeepButton" style="min-height:52px;border:0;border-radius:12px;background:#ffd200;color:#111;font-size:16px;font-weight:900;">Daten behalten</button>' +
       '</div>';
 
     overlay.appendChild(box);
