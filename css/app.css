@@ -60,14 +60,7 @@ body {
 }
 
 .page-bg::after {
-  content: "⚙";
-  position: absolute;
-  left: -42px;
-  bottom: -54px;
-  font-size: 130px;
-  color: var(--accent);
-  opacity: 0.95;
-  transform: rotate(15deg);
+  content: "";
 }
 
 header,
