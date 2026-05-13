@@ -407,6 +407,7 @@ function addIndoorUnit(openAfterAdd, data) {
     '<summary>Rackkühlgerät ' + number + '</summary>' +
     '<div class="indoor-body">' +
       '<div class="grid">' +
+        '<div class="field"><label>Hersteller <span class="required-hint">*</span></label><input data-rk-field="hersteller" required autocomplete="off"></div>' +
         '<div class="field"><label>Modellbezeichnung Rackkühlgerät <span class="required-hint">*</span></label><input data-rk-field="modell" required autocomplete="off"></div>' +
         '<div class="field"><label>Seriennummer <span class="required-hint">*</span></label><input data-rk-field="seriennummer" required autocomplete="off"></div>' +
         '<div class="field"><label>Bezeichnung / Standort</label><input data-rk-field="bezeichnung" autocomplete="off"></div>' +
@@ -453,6 +454,7 @@ addCollapseButtons();
 }
 
 function fillIndoorCard(card, data) {
+  setInputValue(card.querySelector('[data-rk-field="hersteller"]'), data.hersteller || '');
   setInputValue(card.querySelector('[data-rk-field="modell"]'), data.modell || data.type || '');
   setInputValue(card.querySelector('[data-rk-field="seriennummer"]'), data.seriennummer || '');
   setInputValue(card.querySelector('[data-rk-field="bezeichnung"]'), data.bezeichnung || '');
@@ -571,6 +573,7 @@ function collectIndoorUnits() {
     units.push({
       id: unitId,
       nummer: index + 1,
+      hersteller: getInputValue(card.querySelector('[data-rk-field="hersteller"]')),
       modell: getInputValue(card.querySelector('[data-rk-field="modell"]')),
       type: getInputValue(card.querySelector('[data-rk-field="modell"]')),
       seriennummer: getInputValue(card.querySelector('[data-rk-field="seriennummer"]')),
@@ -809,9 +812,11 @@ function getProtocolValidationIssues(data, label) {
   validateCommissioningDateChoice(issues, prefix, kopfdaten);
 
   requireValue(issues, prefix, aussen.modell || aussen.type, 'Modellbezeichnung Außengerät fehlt');
+  requireValue(issues, prefix, aussen.hersteller, 'Hersteller Außengerät fehlt');
   requireValue(issues, prefix, aussen.seriennummer, 'Seriennummer Außengerät fehlt');
 
   (pruefung.rueckkuehlgeraete || []).forEach(function (unit, index) {
+    requireValue(issues, prefix, unit.hersteller, 'Hersteller Rackkühlgerät ' + (index + 1) + ' fehlt');
     requireValue(issues, prefix, unit.modell || unit.type, 'Modellbezeichnung Rackkühlgerät ' + (index + 1) + ' fehlt');
     requireValue(issues, prefix, unit.seriennummer, 'Seriennummer Rückkühlgerät ' + (index + 1) + ' fehlt');
   });
@@ -1483,6 +1488,7 @@ function buildCsvForProtocols(records) {
 
     var aussen = p.aussengeraetMeta || {};
 
+    rows.push([record.recordId, 'Außengerät', '', 'Hersteller', aussen.hersteller || '', '', '']);
     rows.push([record.recordId, 'Außengerät', '', 'Modellbezeichnung Außengerät', aussen.modell || '', '', '']);
     rows.push([record.recordId, 'Außengerät', '', 'Seriennummer', aussen.seriennummer || '', '', '']);
 
@@ -1491,6 +1497,7 @@ function buildCsvForProtocols(records) {
     (p.rueckkuehlgeraete || []).forEach(function (unit, index) {
       var name = 'Rückkühlgerät ' + (index + 1);
 
+      rows.push([record.recordId, 'Rückkühlgerät', name, 'Hersteller', unit.hersteller || '', '', '']);
       rows.push([record.recordId, 'Rückkühlgerät', name, 'Modellbezeichnung', unit.modell || '', '', '']);
       rows.push([record.recordId, 'Rückkühlgerät', name, 'Seriennummer', unit.seriennummer || '', '', '']);
       rows.push([record.recordId, 'Rückkühlgerät', name, 'Bezeichnung / Standort', unit.bezeichnung || '', '', '']);
@@ -1591,9 +1598,9 @@ function buildPrintContent(data) {
 
   html += sectionTitle('Geräte');
   html += '<div class="top-grid">';
-  html += '<div><b>Modellbezeichnung Außengerät / Seriennummer</b><br>' + e(aussen.modell) + '<br>' + e(aussen.seriennummer) + '</div>';
+  html += '<div><b>Hersteller / Modellbezeichnung Außengerät / Seriennummer</b><br>' + e(aussen.hersteller) + '<br>' + e(aussen.modell) + '<br>' + e(aussen.seriennummer) + '</div>';
   html += '<div><b>Modellbezeichnung Rückkühlgerät(-e) / Seriennummer</b><br>' + (p.rueckkuehlgeraete || []).map(function (unit, index) {
-    return e((index + 1) + '. ' + (unit.modell || '') + ' / ' + (unit.seriennummer || ''));
+    return e((index + 1) + '. ' + (unit.hersteller || '') + ' / ' + (unit.modell || '') + ' / ' + (unit.seriennummer || ''));
   }).join('<br>') + '</div>';
   html += '</div>';
 
