@@ -85,24 +85,31 @@
              <input type="date" data-field="erstinbetriebnahme">
           </div>
 
-          <div class="field">
-            <label>Datum wiederholte Inbetriebnahme <span class="required-hint">*</span></label>
+            <div class="field">
+              <label>Datum wiederholte Inbetriebnahme <span class="required-hint">*</span></label>
               <input type="date" data-field="wiederholteInbetriebnahme">
+            </div>
           </div>
+        </div>
       </details>
 
       <details class="section" id="sectionAussen">
         <summary>
           <span>
             3. Außengerät
-            <span class="summary-sub" id="summaryAussen">Modellbezeichnung Außengerät / Seriennummer</span>
+            <span class="summary-sub" id="summaryAussen">Hersteller / Modell/Type / Seriennummer</span>
           </span>
         </summary>
 
         <div class="section-body">
           <div class="grid">
             <div class="field">
-              <label for="aussenTypeInput">Modellbezeichnung Außengerät <span class="required-hint">*</span></label>
+              <label for="aussenHerstellerInput">Hersteller <span class="required-hint">*</span></label>
+              <input id="aussenHerstellerInput" required autocomplete="off">
+            </div>
+
+            <div class="field">
+              <label for="aussenTypeInput">Modell/Type <span class="required-hint">*</span></label>
               <input id="aussenTypeInput" required autocomplete="off">
             </div>
 
@@ -263,6 +270,13 @@
 
         <div class="section-body">
           <div id="fieldsDokumentation"></div>
+          <div class="signature-wrap hidden" id="betreiberSignatureWrap">
+            <label for="betreiberSignatureCanvas">Unterschrift Betreiber</label>
+            <canvas id="betreiberSignatureCanvas" width="1000" height="300"></canvas>
+            <div class="button-grid">
+              <button type="button" class="btn-light" id="clearBetreiberSignatureButton">Betreiber-Unterschrift löschen</button>
+            </div>
+          </div>
         </div>
       </details>
 
@@ -382,10 +396,10 @@
 
   <footer id="footerText">Inbetriebnahmeprotokoll DX Kühler Outdoor</footer>
 
-<script src="js/form-config.js?v=2.2" defer></script>
+<script src="js/form-config.js?v=2.3" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
-<script src="js/app.js?v=2.4" defer></script>
+<script src="js/app.js?v=2.5" defer></script>
 <link rel="stylesheet" href="css/app.css?v=1.1">
 </body>
 </html>
