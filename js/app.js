@@ -6,6 +6,8 @@ var csvLineBreak = String.fromCharCode(13, 10);
 var indoorCounter = 0;
 var signatureDirty = false;
 var signatureDrawing = false;
+var betreiberSignatureDirty = false;
+var betreiberSignatureDrawing = false;
 var editingIndex = null;
 var crcTable = null;
 var logoSvgCache = '';
@@ -28,6 +30,7 @@ window.addEventListener('load', function () {
   bindEvents();
   addCollapseButtons();
   initSignatureCanvas();
+  initBetreiberSignatureCanvas();
   loadSharedLogoSvg();
   loadState();
   restoreDraft();
@@ -154,6 +157,9 @@ function bindEvents() {
   document.getElementById('clearSignatureButton').addEventListener('click', function () {
     clearSignature(true);
   });
+  document.getElementById('clearBetreiberSignatureButton').addEventListener('click', function () {
+    clearBetreiberSignature(true);
+  });
 
   document.getElementById('takeProtocolButton').addEventListener('click', takeProtocolIntoList);
   document.getElementById('bottomTakeButton').addEventListener('click', takeProtocolIntoList);
@@ -182,6 +188,10 @@ function bindEvents() {
   document.getElementById('kundeInput').addEventListener('input', throttledDraftSave);
   document.getElementById('objektInput').addEventListener('input', throttledDraftSave);
   document.getElementById('bemerkungenText').addEventListener('input', throttledDraftSave);
+  document.getElementById('fieldsDokumentation').addEventListener('change', function () {
+    updateBetreiberSignatureVisibility();
+  });
+  updateBetreiberSignatureVisibility();
 }
 
 function bindCommissioningDateFields() {
@@ -460,6 +470,7 @@ function collectProtocol() {
     kopfdaten: collectKopfdaten(),
     pruefung: {
       aussengeraetMeta: {
+        hersteller: getInputValue(document.getElementById('aussenHerstellerInput')),
         modell: getInputValue(document.getElementById('aussenTypeInput')),
         seriennummer: getInputValue(document.getElementById('aussenSeriennummerInput'))
       },
@@ -484,7 +495,9 @@ function collectProtocol() {
       techniker: getInputValue(document.getElementById('signTechnikerInput')),
       ortDatum: getInputValue(document.getElementById('ortDatumInput')),
       vorhanden: signatureDirty,
-      dataUrl: signatureDirty ? document.getElementById('signatureCanvas').toDataURL('image/png') : ''
+      dataUrl: signatureDirty ? document.getElementById('signatureCanvas').toDataURL('image/png') : '',
+      betreiberVorhanden: betreiberSignatureDirty,
+      betreiberDataUrl: betreiberSignatureDirty ? document.getElementById('betreiberSignatureCanvas').toDataURL('image/png') : ''
     }
   };
 
@@ -630,6 +643,7 @@ function fillFormFromProtocol(data) {
   var pruefung = data.pruefung || {};
   var aussen = pruefung.aussengeraetMeta || pruefung.ausseneinheitMeta || {};
 
+  setInputValue(document.getElementById('aussenHerstellerInput'), aussen.hersteller || '');
   setInputValue(document.getElementById('aussenTypeInput'), aussen.modell || aussen.type || '');
   setInputValue(document.getElementById('aussenSeriennummerInput'), aussen.seriennummer || '');
 
@@ -646,6 +660,7 @@ function fillFormFromProtocol(data) {
   setFieldGroup(document.getElementById('fieldsTestbetrieb'), FIELD_GROUPS.testbetrieb, pruefung.testbetrieb || {});
   setFieldGroup(document.getElementById('fieldsErgebnis'), FIELD_GROUPS.ergebnis, pruefung.inbetriebnahmeergebnis || {});
   setFieldGroup(document.getElementById('fieldsDokumentation'), FIELD_GROUPS.dokumentation, pruefung.dokumentation || {});
+  updateBetreiberSignatureVisibility();
 
   setInputValue(document.getElementById('bemerkungenText'), data.bemerkungen || '');
   setInputValue(document.getElementById('signTechnikerInput'), data.unterschrift && data.unterschrift.techniker || '');
@@ -668,6 +683,11 @@ function fillFormFromProtocol(data) {
     drawSignatureFromDataUrl(data.unterschrift.dataUrl);
   } else {
     clearSignature(false);
+  }
+  if (data.unterschrift && data.unterschrift.betreiberDataUrl) {
+    drawBetreiberSignatureFromDataUrl(data.unterschrift.betreiberDataUrl);
+  } else {
+    clearBetreiberSignature(false);
   }
 
   updateAllAttachmentLists();
@@ -799,6 +819,10 @@ function getProtocolValidationIssues(data, label) {
 
   if (!unterschrift.vorhanden) {
     issues.push(prefix + 'Unterschrift fehlt');
+  }
+
+  if (pruefung.dokumentation && pruefung.dokumentation.einweisungBetreiber === 'Ja' && !unterschrift.betreiberVorhanden) {
+    issues.push(prefix + 'Betreiber-Unterschrift fehlt (Einweisung Betreiber = Ja)');
   }
 
   return issues;
@@ -978,13 +1002,15 @@ function updateSummaries() {
   document.getElementById('summaryStammdaten').textContent = [kunde, objekt].filter(Boolean).join(' / ') || 'Kunde und Objektanschrift';
 
   var typ = getInputValue(document.querySelector('[data-field="anlagentyp"]'));
-  var datum = getInputValue(document.querySelector('[data-field="datumUhrzeit"]'));
+  var datum = formatDateTimeDisplay(getInputValue(document.querySelector('[data-field="datumUhrzeit"]')));
 
   document.getElementById('summaryKopfdaten').textContent = [typ, datum].filter(Boolean).join(' / ') || 'Anlagendaten, Datum, Techniker';
 
-  var aussen = getInputValue(document.getElementById('aussenTypeInput'));
+  var aussenHersteller = getInputValue(document.getElementById('aussenHerstellerInput'));
+  var aussenModell = getInputValue(document.getElementById('aussenTypeInput'));
+  var aussenSeriennummer = getInputValue(document.getElementById('aussenSeriennummerInput'));
 
-  document.getElementById('summaryAussen').textContent = aussen || 'Modellbezeichnung Außengerät / Seriennummer';
+  document.getElementById('summaryAussen').textContent = [aussenHersteller, aussenModell, aussenSeriennummer].filter(Boolean).join(' / ') || 'Hersteller / Modell/Type / Seriennummer';
   document.getElementById('summaryInnen').textContent = document.querySelectorAll('.indoor-card').length + ' Rackkühlgerät(e)';
   document.getElementById('summaryBemerkungen').textContent = getInputValue(document.getElementById('bemerkungenText')) ? 'Bemerkung vorhanden' : 'keine Bemerkung';
   document.getElementById('summaryFotos').textContent = (currentPhotos.length + currentAussenPhotos.length + countIndoorFiles()) + ' Datei(en) ausgewählt';
@@ -1547,7 +1573,7 @@ function buildPrintContent(data) {
 
   html += '<div class="top-grid">';
   html += '<div><b>Kunde:</b> ' + e(s.kunde) + '<br><b>Objektanschrift:</b> ' + e(s.objektanschrift) + '<br><b>Anlagenerrichter:</b> ' + e(k.anlagenerrichter) + '<br><b>Anlagentyp:</b> ' + e(k.anlagentyp) + '</div>';
-  html += '<div><b>Datum/Uhrzeit:</b> ' + e(k.datumUhrzeit) + '<br><b>Techniker:</b> ' + e(k.techniker) + '<br><b>Erstinbetriebnahme:</b> ' + e(k.erstinbetriebnahme) + '<br><b>Wiederholte Inbetriebnahme:</b> ' + e(k.wiederholteInbetriebnahme) + '</div>';
+  html += '<div><b>Datum/Uhrzeit:</b> ' + e(formatDateTimeDisplay(k.datumUhrzeit)) + '<br><b>Techniker:</b> ' + e(k.techniker) + '<br><b>Erstinbetriebnahme:</b> ' + e(k.erstinbetriebnahme) + '<br><b>Wiederholte Inbetriebnahme:</b> ' + e(k.wiederholteInbetriebnahme) + '</div>';
   html += '</div>';
 
   html += sectionTitle('Geräte');
@@ -1568,10 +1594,10 @@ function buildPrintContent(data) {
     ['Gesamtfüllmenge', p.kaeltemittel && p.kaeltemittel.gesamtfuellmenge || '', 'kg']
   ]);
 
-  html += printFieldTable('Zusatzplatinen / Komponenten', p.zusatzplatinen || {}, FIELD_GROUPS.zusatz);
+  html += printFieldTable('Zusatzplatinen / Komponenten', p.zusatzplatinen || {}, FIELD_GROUPS.zusatz, false);
   html += printFieldTable('Spannungsversorgung', p.spannungsversorgung || {}, FIELD_GROUPS.spannung);
   html += printFieldTable('Testbetrieb / Manometerdruck', p.testbetrieb || {}, FIELD_GROUPS.testbetrieb);
-  html += printFieldTable('Inbetriebnahmeergebnis', p.inbetriebnahmeergebnis || {}, FIELD_GROUPS.ergebnis);
+  html += printFieldTable('Inbetriebnahmeergebnis', p.inbetriebnahmeergebnis || {}, FIELD_GROUPS.ergebnis, false);
   html += printFieldTable('Anlagendokumentation / Einweisung', p.dokumentation || {}, FIELD_GROUPS.dokumentation);
 
   html += sectionTitle('Bemerkungen');
@@ -1579,6 +1605,9 @@ function buildPrintContent(data) {
 
   html += '<div class="sign-grid">';
   html += '<div><b>Stempel/Signatur</b><div class="sig">' + (u.dataUrl ? '<img src="' + e(u.dataUrl) + '">' : '') + '</div><div>' + e(u.techniker || '') + '</div></div>';
+  if (u.betreiberDataUrl) {
+    html += '<div><b>Unterschrift Betreiber</b><div class="sig"><img src="' + e(u.betreiberDataUrl) + '"></div></div>';
+  }
   html += '<div class="ort"><b>Ort Datum</b><br><br>' + e(u.ortDatum || '') + '</div>';
   html += '</div>';
 
@@ -1605,21 +1634,22 @@ function printChecklistTable(title, list) {
   return html;
 }
 
-function printFieldTable(title, data, config) {
+function printFieldTable(title, data, config, showUnitColumn) {
   var rows = config.map(function (item) {
     return [item.label, data[item.key] || '', item.unit || ''];
   });
 
-  return printKeyValueTable(title, rows);
+  return printKeyValueTable(title, rows, showUnitColumn !== false);
 }
 
-function printKeyValueTable(title, rows) {
+function printKeyValueTable(title, rows, showUnitColumn) {
   var html = sectionTitle(title);
+  var withUnit = showUnitColumn !== false;
 
-  html += '<table><tr><th>Feld</th><th>Wert</th><th>Einheit</th></tr>';
+  html += withUnit ? '<table><tr><th>Feld</th><th>Wert</th><th>Einheit</th></tr>' : '<table><tr><th>Feld</th><th>Wert</th></tr>';
 
   rows.forEach(function (r) {
-    html += '<tr><td>' + e(r[0]) + '</td><td>' + e(r[1]) + '</td><td>' + e(r[2]) + '</td></tr>';
+    html += withUnit ? '<tr><td>' + e(r[0]) + '</td><td>' + e(r[1]) + '</td><td>' + e(r[2]) + '</td></tr>' : '<tr><td>' + e(r[0]) + '</td><td>' + e(r[1]) + '</td></tr>';
   });
 
   html += '</table>';
@@ -2079,6 +2109,53 @@ function initSignatureCanvas() {
   canvas.addEventListener('touchend', end, { passive: false });
 }
 
+function initBetreiberSignatureCanvas() {
+  var canvas = document.getElementById('betreiberSignatureCanvas');
+  var ctx = canvas.getContext('2d');
+
+  ctx.lineWidth = 4;
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = '#111827';
+
+  function pos(evt) {
+    var rect = canvas.getBoundingClientRect();
+    var touch = evt.touches && evt.touches[0] ? evt.touches[0] : evt;
+    return {
+      x: (touch.clientX - rect.left) * (canvas.width / rect.width),
+      y: (touch.clientY - rect.top) * (canvas.height / rect.height)
+    };
+  }
+
+  function start(evt) {
+    evt.preventDefault();
+    betreiberSignatureDrawing = true;
+    var p = pos(evt);
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y);
+  }
+
+  function move(evt) {
+    if (!betreiberSignatureDrawing) return;
+    evt.preventDefault();
+    var p = pos(evt);
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+    betreiberSignatureDirty = true;
+  }
+
+  function end(evt) {
+    if (betreiberSignatureDrawing) evt.preventDefault();
+    betreiberSignatureDrawing = false;
+  }
+
+  canvas.addEventListener('mousedown', start);
+  canvas.addEventListener('mousemove', move);
+  window.addEventListener('mouseup', end);
+  canvas.addEventListener('touchstart', start, { passive: false });
+  canvas.addEventListener('touchmove', move, { passive: false });
+  canvas.addEventListener('touchend', end, { passive: false });
+}
+
 function clearSignature(showStatus) {
   var canvas = document.getElementById('signatureCanvas');
   var ctx = canvas.getContext('2d');
@@ -2089,6 +2166,16 @@ function clearSignature(showStatus) {
 
   if (showStatus) {
     setStatus('Unterschrift gelöscht.', 'ok');
+  }
+}
+
+function clearBetreiberSignature(showStatus) {
+  var canvas = document.getElementById('betreiberSignatureCanvas');
+  var ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  betreiberSignatureDirty = false;
+  if (showStatus) {
+    setStatus('Betreiber-Unterschrift gelöscht.', 'ok');
   }
 }
 
@@ -2108,11 +2195,37 @@ function drawSignatureFromDataUrl(dataUrl) {
   img.src = dataUrl;
 }
 
+function drawBetreiberSignatureFromDataUrl(dataUrl) {
+  clearBetreiberSignature(false);
+  var canvas = document.getElementById('betreiberSignatureCanvas');
+  var ctx = canvas.getContext('2d');
+  var img = new Image();
+  img.onload = function () {
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    betreiberSignatureDirty = true;
+  };
+  img.src = dataUrl;
+}
+
+function updateBetreiberSignatureVisibility() {
+  var wrap = document.getElementById('betreiberSignatureWrap');
+  var checked = document.querySelector('input[name="dokumentation_einweisungBetreiber"]:checked');
+  var isJa = checked && checked.value === 'Ja';
+  wrap.classList.toggle('hidden', !isJa);
+  if (!isJa) {
+    clearBetreiberSignature(false);
+  }
+}
+
 function setStatus(message, type) {
   var el = document.getElementById('status');
 
   el.textContent = message || '';
   el.className = 'status ' + (type === 'error' ? 'error' : 'ok');
+}
+
+function formatDateTimeDisplay(value) {
+  return (value || '').replace('T', ' ');
 }
 
 function downloadFile(filename, data, type) {
