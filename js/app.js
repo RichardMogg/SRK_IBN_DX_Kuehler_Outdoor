@@ -821,6 +821,10 @@ function getProtocolValidationIssues(data, label) {
     issues.push(prefix + 'Unterschrift fehlt');
   }
 
+  if (pruefung.dokumentation && pruefung.dokumentation.einweisungBetreiber === 'Ja' && !unterschrift.betreiberVorhanden) {
+    issues.push(prefix + 'Betreiber-Unterschrift fehlt (Einweisung Betreiber = Ja)');
+  }
+
   return issues;
 }
 

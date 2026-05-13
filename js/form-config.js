@@ -52,6 +52,13 @@ var FIELD_GROUPS = {
     },
     {
       key: 'dimensionFluessigkeitsleitung',
+      label: 'Dimension Flüssigkeitsleitung (mm oder Zoll, z. B. 10 / 3/8)',
+      type: 'text'
+    },
+    {
+      key: 'dimensionGasleitung',
+      label: 'Dimension Gasleitung (mm oder Zoll, z. B. 12 / 1 1/2)',
+      type: 'text'
       label: 'Dimension Flüssigkeitsleitung',
       unit: 'mm',
       type: 'decimal'
