@@ -2291,12 +2291,7 @@ function initBetreiberSignatureCanvas() {
     betreiberSignatureDrawing = false;
   }
 
-  canvas.addEventListener('mousedown', start);
-  canvas.addEventListener('mousemove', move);
-  window.addEventListener('mouseup', end);
-  canvas.addEventListener('touchstart', start, { passive: false });
-  canvas.addEventListener('touchmove', move, { passive: false });
-  canvas.addEventListener('touchend', end, { passive: false });
+
 }
 
 function clearSignature(showStatus) {
