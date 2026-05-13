@@ -385,6 +385,20 @@ canvas#signatureCanvas {
   display: block;
 }
 
+canvas#betreiberSignatureCanvas {
+  width: 100%;
+  height: 180px;
+  border: 2px dashed #94a3b8;
+  border-radius: 10px;
+  background: #fff;
+  touch-action: none;
+  display: block;
+}
+
+.hidden {
+  display: none;
+}
+
 .photo-list {
   margin-top: 10px;
   font-size: 13px;
