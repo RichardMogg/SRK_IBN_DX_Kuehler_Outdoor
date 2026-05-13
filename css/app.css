@@ -484,6 +484,14 @@ button:disabled {
   color: #111827;
 }
 
+#saveStammdatenButton,
+#addInnenButton,
+#bottomInnenButton {
+  background: var(--ok-bg);
+  color: var(--ok-text);
+  border: 1px solid #86efac;
+}
+
 .btn-danger {
   background: var(--danger);
   color: #fff;
