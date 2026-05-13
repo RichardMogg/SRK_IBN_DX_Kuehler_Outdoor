@@ -59,6 +59,15 @@ var FIELD_GROUPS = {
       key: 'dimensionGasleitung',
       label: 'Dimension Gasleitung (mm oder Zoll, z. B. 12 / 1 1/2)',
       type: 'text'
+      label: 'Dimension Flüssigkeitsleitung',
+      unit: 'mm',
+      type: 'decimal'
+    },
+    {
+      key: 'dimensionGasleitung',
+      label: 'Dimension Gasleitung',
+      unit: 'mm',
+      type: 'decimal'
     },
     {
       key: 'mitStickstoffGeloetet',
