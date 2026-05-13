@@ -4,10 +4,14 @@ var lineBreak = String.fromCharCode(10);
 var csvLineBreak = String.fromCharCode(13, 10);
 var SIGNATURE_SUMMARY_DEFAULT = 'Techniker, Unterschrift, Ort';
 var SIGNATURE_DATE_MISSING = 'Signatur-Tag fehlt';
+var SIGNATURE_SUMMARY_DEFAULT = 'Techniker, Unterschrift, Ort';
+var SIGNATURE_DATE_MISSING = 'Signatur-Tag fehlt';
 
 var indoorCounter = 0;
 var signatureDirty = false;
 var signatureDrawing = false;
+var betreiberSignatureDirty = false;
+var betreiberSignatureDrawing = false;
 var betreiberSignatureDirty = false;
 var betreiberSignatureDrawing = false;
 var editingIndex = null;
@@ -32,6 +36,7 @@ window.addEventListener('load', function () {
   bindEvents();
   addCollapseButtons();
   initSignatureCanvas();
+  initBetreiberSignatureCanvas();
   initBetreiberSignatureCanvas();
   loadSharedLogoSvg();
   loadState();
@@ -162,6 +167,9 @@ function bindEvents() {
   document.getElementById('clearBetreiberSignatureButton').addEventListener('click', function () {
     clearBetreiberSignature(true);
   });
+  document.getElementById('clearBetreiberSignatureButton').addEventListener('click', function () {
+    clearBetreiberSignature(true);
+  });
 
   document.getElementById('takeProtocolButton').addEventListener('click', takeProtocolIntoList);
   document.getElementById('bottomTakeButton').addEventListener('click', takeProtocolIntoList);
@@ -190,6 +198,10 @@ function bindEvents() {
   document.getElementById('kundeInput').addEventListener('input', throttledDraftSave);
   document.getElementById('objektInput').addEventListener('input', throttledDraftSave);
   document.getElementById('bemerkungenText').addEventListener('input', throttledDraftSave);
+  document.getElementById('fieldsDokumentation').addEventListener('change', function () {
+    updateBetreiberSignatureVisibility();
+  });
+  updateBetreiberSignatureVisibility();
   document.getElementById('fieldsDokumentation').addEventListener('change', function () {
     updateBetreiberSignatureVisibility();
   });
@@ -303,11 +315,18 @@ function hasDirectCollapseButton(body) {
 function setDefaultDateTime() {
   var field = document.querySelector('[data-field="datumUhrzeit"]');
   var signDateField = document.getElementById('signDatumInput');
+  var signDateField = document.getElementById('signDatumInput');
 
   if (field && !field.value) {
     var now = new Date();
     now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
     field.value = now.toISOString().slice(0, 16);
+  }
+
+  if (signDateField && !signDateField.value) {
+    var today = new Date();
+    today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+    signDateField.value = today.toISOString().slice(0, 10);
   }
 
   if (signDateField && !signDateField.value) {
@@ -410,6 +429,7 @@ function addIndoorUnit(openAfterAdd, data) {
     '<div class="indoor-body">' +
       '<div class="grid">' +
         '<div class="field"><label>Hersteller <span class="required-hint">*</span></label><input data-rk-field="hersteller" required autocomplete="off"></div>' +
+        '<div class="field"><label>Hersteller <span class="required-hint">*</span></label><input data-rk-field="hersteller" required autocomplete="off"></div>' +
         '<div class="field"><label>Modellbezeichnung Rackkühlgerät <span class="required-hint">*</span></label><input data-rk-field="modell" required autocomplete="off"></div>' +
         '<div class="field"><label>Seriennummer <span class="required-hint">*</span></label><input data-rk-field="seriennummer" required autocomplete="off"></div>' +
         '<div class="field"><label>Bezeichnung / Standort</label><input data-rk-field="bezeichnung" autocomplete="off"></div>' +
@@ -457,6 +477,7 @@ addCollapseButtons();
 
 function fillIndoorCard(card, data) {
   setInputValue(card.querySelector('[data-rk-field="hersteller"]'), data.hersteller || '');
+  setInputValue(card.querySelector('[data-rk-field="hersteller"]'), data.hersteller || '');
   setInputValue(card.querySelector('[data-rk-field="modell"]'), data.modell || data.type || '');
   setInputValue(card.querySelector('[data-rk-field="seriennummer"]'), data.seriennummer || '');
   setInputValue(card.querySelector('[data-rk-field="bezeichnung"]'), data.bezeichnung || '');
@@ -481,6 +502,7 @@ function collectProtocol() {
     kopfdaten: collectKopfdaten(),
     pruefung: {
       aussengeraetMeta: {
+        hersteller: getInputValue(document.getElementById('aussenHerstellerInput')),
         hersteller: getInputValue(document.getElementById('aussenHerstellerInput')),
         modell: getInputValue(document.getElementById('aussenTypeInput')),
         seriennummer: getInputValue(document.getElementById('aussenSeriennummerInput'))
@@ -507,7 +529,13 @@ function collectProtocol() {
       ort: getInputValue(document.getElementById('signOrtInput')),
       datum: getInputValue(document.getElementById('signDatumInput')),
       ortDatum: [getInputValue(document.getElementById('signOrtInput')), getInputValue(document.getElementById('signDatumInput'))].filter(Boolean).join(', '),
+      ort: getInputValue(document.getElementById('signOrtInput')),
+      datum: getInputValue(document.getElementById('signDatumInput')),
+      ortDatum: [getInputValue(document.getElementById('signOrtInput')), getInputValue(document.getElementById('signDatumInput'))].filter(Boolean).join(', '),
       vorhanden: signatureDirty,
+      dataUrl: signatureDirty ? document.getElementById('signatureCanvas').toDataURL('image/png') : '',
+      betreiberVorhanden: betreiberSignatureDirty,
+      betreiberDataUrl: betreiberSignatureDirty ? document.getElementById('betreiberSignatureCanvas').toDataURL('image/png') : ''
       dataUrl: signatureDirty ? document.getElementById('signatureCanvas').toDataURL('image/png') : '',
       betreiberVorhanden: betreiberSignatureDirty,
       betreiberDataUrl: betreiberSignatureDirty ? document.getElementById('betreiberSignatureCanvas').toDataURL('image/png') : ''
@@ -575,6 +603,7 @@ function collectIndoorUnits() {
     units.push({
       id: unitId,
       nummer: index + 1,
+      hersteller: getInputValue(card.querySelector('[data-rk-field="hersteller"]')),
       hersteller: getInputValue(card.querySelector('[data-rk-field="hersteller"]')),
       modell: getInputValue(card.querySelector('[data-rk-field="modell"]')),
       type: getInputValue(card.querySelector('[data-rk-field="modell"]')),
@@ -658,6 +687,7 @@ function fillFormFromProtocol(data) {
   var aussen = pruefung.aussengeraetMeta || pruefung.ausseneinheitMeta || {};
 
   setInputValue(document.getElementById('aussenHerstellerInput'), aussen.hersteller || '');
+  setInputValue(document.getElementById('aussenHerstellerInput'), aussen.hersteller || '');
   setInputValue(document.getElementById('aussenTypeInput'), aussen.modell || aussen.type || '');
   setInputValue(document.getElementById('aussenSeriennummerInput'), aussen.seriennummer || '');
 
@@ -675,9 +705,12 @@ function fillFormFromProtocol(data) {
   setFieldGroup(document.getElementById('fieldsErgebnis'), FIELD_GROUPS.ergebnis, pruefung.inbetriebnahmeergebnis || {});
   setFieldGroup(document.getElementById('fieldsDokumentation'), FIELD_GROUPS.dokumentation, pruefung.dokumentation || {});
   updateBetreiberSignatureVisibility();
+  updateBetreiberSignatureVisibility();
 
   setInputValue(document.getElementById('bemerkungenText'), data.bemerkungen || '');
   setInputValue(document.getElementById('signTechnikerInput'), data.unterschrift && data.unterschrift.techniker || '');
+  setInputValue(document.getElementById('signOrtInput'), data.unterschrift && (data.unterschrift.ort || data.unterschrift.ortDatum) || '');
+  setInputValue(document.getElementById('signDatumInput'), data.unterschrift && data.unterschrift.datum || '');
   setInputValue(document.getElementById('signOrtInput'), data.unterschrift && (data.unterschrift.ort || data.unterschrift.ortDatum) || '');
   setInputValue(document.getElementById('signDatumInput'), data.unterschrift && data.unterschrift.datum || '');
 
@@ -698,6 +731,11 @@ function fillFormFromProtocol(data) {
     drawSignatureFromDataUrl(data.unterschrift.dataUrl);
   } else {
     clearSignature(false);
+  }
+  if (data.unterschrift && data.unterschrift.betreiberDataUrl) {
+    drawBetreiberSignatureFromDataUrl(data.unterschrift.betreiberDataUrl);
+  } else {
+    clearBetreiberSignature(false);
   }
   if (data.unterschrift && data.unterschrift.betreiberDataUrl) {
     drawBetreiberSignatureFromDataUrl(data.unterschrift.betreiberDataUrl);
@@ -815,9 +853,11 @@ function getProtocolValidationIssues(data, label) {
 
   requireValue(issues, prefix, aussen.modell || aussen.type, 'Modellbezeichnung Außengerät fehlt');
   requireValue(issues, prefix, aussen.hersteller, 'Hersteller Außengerät fehlt');
+  requireValue(issues, prefix, aussen.hersteller, 'Hersteller Außengerät fehlt');
   requireValue(issues, prefix, aussen.seriennummer, 'Seriennummer Außengerät fehlt');
 
   (pruefung.rueckkuehlgeraete || []).forEach(function (unit, index) {
+    requireValue(issues, prefix, unit.hersteller, 'Hersteller Rackkühlgerät ' + (index + 1) + ' fehlt');
     requireValue(issues, prefix, unit.hersteller, 'Hersteller Rackkühlgerät ' + (index + 1) + ' fehlt');
     requireValue(issues, prefix, unit.modell || unit.type, 'Modellbezeichnung Rackkühlgerät ' + (index + 1) + ' fehlt');
     requireValue(issues, prefix, unit.seriennummer, 'Seriennummer Rückkühlgerät ' + (index + 1) + ' fehlt');
@@ -833,10 +873,14 @@ function getProtocolValidationIssues(data, label) {
   validateBoolGroup(issues, prefix, FIELD_GROUPS.dokumentation, pruefung.dokumentation || {}, 'Dokumentation');
 
   requireValue(issues, prefix, unterschrift.techniker, 'Technikername bei Signatur fehlt');
-  requireValue(issues, prefix, unterschrift.datum, 'Signatur-Datum fehlt');
+  requireValue(issues, prefix, unterschrift.datum, SIGNATURE_DATE_MISSING);
 
   if (!unterschrift.vorhanden) {
     issues.push(prefix + 'Unterschrift fehlt');
+  }
+
+  if (pruefung.dokumentation && pruefung.dokumentation.einweisungBetreiber === 'Ja' && !unterschrift.betreiberVorhanden) {
+    issues.push(prefix + 'Betreiber-Unterschrift fehlt (Einweisung Betreiber = Ja)');
   }
 
   if (pruefung.dokumentation && pruefung.dokumentation.einweisungBetreiber === 'Ja' && !unterschrift.betreiberVorhanden) {
@@ -1004,15 +1048,20 @@ function deleteProtocol(index) {
 function updateEditModeUI() {
   var banner = document.getElementById('editBanner');
   var bottomButton = document.getElementById('bottomTakeButton');
+  var bottomButton = document.getElementById('bottomTakeButton');
 
   if (editingIndex !== null) {
     banner.className = 'edit-banner active';
     banner.textContent = 'Bearbeitungsmodus aktiv: Beim Übernehmen wird das geladene Protokoll aktualisiert.';
     bottomButton.textContent = 'Änderung speichern';
     bottomButton.className = 'btn-edit-save';
+    bottomButton.textContent = 'Änderung speichern';
+    bottomButton.className = 'btn-edit-save';
   } else {
     banner.className = 'edit-banner';
     banner.textContent = '';
+    bottomButton.textContent = 'Übernehmen';
+    bottomButton.className = 'btn-brand';
     bottomButton.textContent = 'Übernehmen';
     bottomButton.className = 'btn-brand';
   }
@@ -1026,18 +1075,23 @@ function updateSummaries() {
 
   var typ = getInputValue(document.querySelector('[data-field="anlagentyp"]'));
   var datum = formatDateTimeDisplay(getInputValue(document.querySelector('[data-field="datumUhrzeit"]')));
+  var datum = formatDateTimeDisplay(getInputValue(document.querySelector('[data-field="datumUhrzeit"]')));
 
   document.getElementById('summaryKopfdaten').textContent = [typ, datum].filter(Boolean).join(' / ') || 'Anlagendaten, Datum, Techniker';
 
   var aussenHersteller = getInputValue(document.getElementById('aussenHerstellerInput'));
   var aussenModell = getInputValue(document.getElementById('aussenTypeInput'));
   var aussenSeriennummer = getInputValue(document.getElementById('aussenSeriennummerInput'));
+  var aussenHersteller = getInputValue(document.getElementById('aussenHerstellerInput'));
+  var aussenModell = getInputValue(document.getElementById('aussenTypeInput'));
+  var aussenSeriennummer = getInputValue(document.getElementById('aussenSeriennummerInput'));
 
+  document.getElementById('summaryAussen').textContent = [aussenHersteller, aussenModell, aussenSeriennummer].filter(Boolean).join(' / ') || 'Hersteller / Modell/Type / Seriennummer';
   document.getElementById('summaryAussen').textContent = [aussenHersteller, aussenModell, aussenSeriennummer].filter(Boolean).join(' / ') || 'Hersteller / Modell/Type / Seriennummer';
   document.getElementById('summaryInnen').textContent = document.querySelectorAll('.indoor-card').length + ' Rackkühlgerät(e)';
   document.getElementById('summaryBemerkungen').textContent = getInputValue(document.getElementById('bemerkungenText')) ? 'Bemerkung vorhanden' : 'keine Bemerkung';
   document.getElementById('summaryFotos').textContent = (currentPhotos.length + currentAussenPhotos.length + countIndoorFiles()) + ' Datei(en) ausgewählt';
-  document.getElementById('summaryUnterschrift').textContent = signatureDirty ? 'Unterschrift vorhanden' : 'Techniker, Unterschrift, Ort';
+  document.getElementById('summaryUnterschrift').textContent = signatureDirty ? 'Unterschrift vorhanden' : SIGNATURE_SUMMARY_DEFAULT;
 }
 
 function countIndoorFiles() {
@@ -1496,6 +1550,7 @@ function buildCsvForProtocols(records) {
     var aussen = p.aussengeraetMeta || {};
 
     rows.push([record.recordId, 'Außengerät', '', 'Hersteller', aussen.hersteller || '', '', '']);
+    rows.push([record.recordId, 'Außengerät', '', 'Hersteller', aussen.hersteller || '', '', '']);
     rows.push([record.recordId, 'Außengerät', '', 'Modellbezeichnung Außengerät', aussen.modell || '', '', '']);
     rows.push([record.recordId, 'Außengerät', '', 'Seriennummer', aussen.seriennummer || '', '', '']);
 
@@ -1504,6 +1559,7 @@ function buildCsvForProtocols(records) {
     (p.rueckkuehlgeraete || []).forEach(function (unit, index) {
       var name = 'Rückkühlgerät ' + (index + 1);
 
+      rows.push([record.recordId, 'Rückkühlgerät', name, 'Hersteller', unit.hersteller || '', '', '']);
       rows.push([record.recordId, 'Rückkühlgerät', name, 'Hersteller', unit.hersteller || '', '', '']);
       rows.push([record.recordId, 'Rückkühlgerät', name, 'Modellbezeichnung', unit.modell || '', '', '']);
       rows.push([record.recordId, 'Rückkühlgerät', name, 'Seriennummer', unit.seriennummer || '', '', '']);
@@ -1522,6 +1578,8 @@ function buildCsvForProtocols(records) {
 
     rows.push([record.recordId, 'Bemerkungen', '', 'Bemerkungen', data.bemerkungen || '', '', '']);
     rows.push([record.recordId, 'Unterschrift', '', 'Techniker', data.unterschrift && data.unterschrift.techniker || '', data.unterschrift && data.unterschrift.vorhanden ? 'Unterschrift eingebettet' : 'keine Unterschrift', '']);
+    rows.push([record.recordId, 'Unterschrift', '', 'Ort', data.unterschrift && (data.unterschrift.ort || '') || '', '', '']);
+    rows.push([record.recordId, 'Unterschrift', '', 'Datum', data.unterschrift && (data.unterschrift.datum || '') || '', '', '']);
     rows.push([record.recordId, 'Unterschrift', '', 'Ort', data.unterschrift && (data.unterschrift.ort || '') || '', '', '']);
     rows.push([record.recordId, 'Unterschrift', '', 'Datum', data.unterschrift && (data.unterschrift.datum || '') || '', '', '']);
 
@@ -1601,12 +1659,15 @@ function buildPrintContent(data) {
   html += '<div class="top-grid">';
   html += '<div><b>Kunde:</b> ' + e(s.kunde) + '<br><b>Objektanschrift:</b> ' + e(s.objektanschrift) + '<br><b>Anlagenerrichter:</b> ' + e(k.anlagenerrichter) + '<br><b>Anlagentyp:</b> ' + e(k.anlagentyp) + '</div>';
   html += '<div><b>Datum/Uhrzeit:</b> ' + e(formatDateTimeDisplay(k.datumUhrzeit)) + '<br><b>Techniker:</b> ' + e(k.techniker) + '<br><b>Erstinbetriebnahme:</b> ' + e(k.erstinbetriebnahme) + '<br><b>Wiederholte Inbetriebnahme:</b> ' + e(k.wiederholteInbetriebnahme) + '</div>';
+  html += '<div><b>Datum/Uhrzeit:</b> ' + e(formatDateTimeDisplay(k.datumUhrzeit)) + '<br><b>Techniker:</b> ' + e(k.techniker) + '<br><b>Erstinbetriebnahme:</b> ' + e(k.erstinbetriebnahme) + '<br><b>Wiederholte Inbetriebnahme:</b> ' + e(k.wiederholteInbetriebnahme) + '</div>';
   html += '</div>';
 
   html += sectionTitle('Geräte');
   html += '<div class="top-grid">';
   html += '<div><b>Hersteller / Modellbezeichnung Außengerät / Seriennummer</b><br>' + e(aussen.hersteller) + '<br>' + e(aussen.modell) + '<br>' + e(aussen.seriennummer) + '</div>';
+  html += '<div><b>Hersteller / Modellbezeichnung Außengerät / Seriennummer</b><br>' + e(aussen.hersteller) + '<br>' + e(aussen.modell) + '<br>' + e(aussen.seriennummer) + '</div>';
   html += '<div><b>Modellbezeichnung Rückkühlgerät(-e) / Seriennummer</b><br>' + (p.rueckkuehlgeraete || []).map(function (unit, index) {
+    return e((index + 1) + '. ' + (unit.hersteller || '') + ' / ' + (unit.modell || '') + ' / ' + (unit.seriennummer || ''));
     return e((index + 1) + '. ' + (unit.hersteller || '') + ' / ' + (unit.modell || '') + ' / ' + (unit.seriennummer || ''));
   }).join('<br>') + '</div>';
   html += '</div>';
@@ -1622,8 +1683,10 @@ function buildPrintContent(data) {
   ]);
 
   html += printFieldTable('Zusatzplatinen / Komponenten', p.zusatzplatinen || {}, FIELD_GROUPS.zusatz, false);
+  html += printFieldTable('Zusatzplatinen / Komponenten', p.zusatzplatinen || {}, FIELD_GROUPS.zusatz, false);
   html += printFieldTable('Spannungsversorgung', p.spannungsversorgung || {}, FIELD_GROUPS.spannung);
   html += printFieldTable('Testbetrieb / Manometerdruck', p.testbetrieb || {}, FIELD_GROUPS.testbetrieb);
+  html += printFieldTable('Inbetriebnahmeergebnis', p.inbetriebnahmeergebnis || {}, FIELD_GROUPS.ergebnis, false);
   html += printFieldTable('Inbetriebnahmeergebnis', p.inbetriebnahmeergebnis || {}, FIELD_GROUPS.ergebnis, false);
   html += printFieldTable('Anlagendokumentation / Einweisung', p.dokumentation || {}, FIELD_GROUPS.dokumentation);
 
@@ -1635,7 +1698,7 @@ function buildPrintContent(data) {
   if (u.betreiberDataUrl) {
     html += '<div><b>Unterschrift Betreiber</b><div class="sig"><img src="' + e(u.betreiberDataUrl) + '"></div></div>';
   }
-  html += '<div class="ort"><b>Ort Datum</b><br><br>' + e(u.ortDatum || '') + '</div>';
+  html += '<div class="ort"><b>Ort</b><br>' + e(u.ort || '') + '<br><br>' + e(u.datum || '') + '</div>';
   html += '</div>';
 
   html += '</div>';
@@ -1662,20 +1725,26 @@ function printChecklistTable(title, list) {
 }
 
 function printFieldTable(title, data, config, showUnitColumn) {
+function printFieldTable(title, data, config, showUnitColumn) {
   var rows = config.map(function (item) {
     return [item.label, data[item.key] || '', item.unit || ''];
   });
 
   return printKeyValueTable(title, rows, showUnitColumn !== false);
+  return printKeyValueTable(title, rows, showUnitColumn !== false);
 }
 
 function printKeyValueTable(title, rows, showUnitColumn) {
+function printKeyValueTable(title, rows, showUnitColumn) {
   var html = sectionTitle(title);
+  var withUnit = showUnitColumn !== false;
   var withUnit = showUnitColumn !== false;
 
   html += withUnit ? '<table><tr><th>Feld</th><th>Wert</th><th>Einheit</th></tr>' : '<table><tr><th>Feld</th><th>Wert</th></tr>';
+  html += withUnit ? '<table><tr><th>Feld</th><th>Wert</th><th>Einheit</th></tr>' : '<table><tr><th>Feld</th><th>Wert</th></tr>';
 
   rows.forEach(function (r) {
+    html += withUnit ? '<tr><td>' + e(r[0]) + '</td><td>' + e(r[1]) + '</td><td>' + e(r[2]) + '</td></tr>' : '<tr><td>' + e(r[0]) + '</td><td>' + e(r[1]) + '</td></tr>';
     html += withUnit ? '<tr><td>' + e(r[0]) + '</td><td>' + e(r[1]) + '</td><td>' + e(r[2]) + '</td></tr>' : '<tr><td>' + e(r[0]) + '</td><td>' + e(r[1]) + '</td></tr>';
   });
 
@@ -1710,7 +1779,10 @@ function buildPrintCss() {
     'th{background:#eee}',
     '.sign-grid{display:grid;grid-template-columns:1fr 1fr;border:1px solid #111;margin-top:6mm}',
     '.sign-grid>div{min-height:24mm;padding:2mm;border-right:1px solid #111}',
+    '.sign-grid>div{min-height:24mm;padding:2mm;border-right:1px solid #111}',
     '.sign-grid>div:last-child{border-right:0}',
+    '.sig{height:17.6mm;margin-top:2mm}',
+    '.sig img{max-height:17.6mm;max-width:100%}',
     '.sig{height:17.6mm;margin-top:2mm}',
     '.sig img{max-height:17.6mm;max-width:100%}',
     '.ort{text-align:center;font-size:13px}',
@@ -2183,6 +2255,53 @@ function initBetreiberSignatureCanvas() {
   canvas.addEventListener('touchend', end, { passive: false });
 }
 
+function initBetreiberSignatureCanvas() {
+  var canvas = document.getElementById('betreiberSignatureCanvas');
+  var ctx = canvas.getContext('2d');
+
+  ctx.lineWidth = 4;
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = '#111827';
+
+  function pos(evt) {
+    var rect = canvas.getBoundingClientRect();
+    var touch = evt.touches && evt.touches[0] ? evt.touches[0] : evt;
+    return {
+      x: (touch.clientX - rect.left) * (canvas.width / rect.width),
+      y: (touch.clientY - rect.top) * (canvas.height / rect.height)
+    };
+  }
+
+  function start(evt) {
+    evt.preventDefault();
+    betreiberSignatureDrawing = true;
+    var p = pos(evt);
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y);
+  }
+
+  function move(evt) {
+    if (!betreiberSignatureDrawing) return;
+    evt.preventDefault();
+    var p = pos(evt);
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+    betreiberSignatureDirty = true;
+  }
+
+  function end(evt) {
+    if (betreiberSignatureDrawing) evt.preventDefault();
+    betreiberSignatureDrawing = false;
+  }
+
+  canvas.addEventListener('mousedown', start);
+  canvas.addEventListener('mousemove', move);
+  window.addEventListener('mouseup', end);
+  canvas.addEventListener('touchstart', start, { passive: false });
+  canvas.addEventListener('touchmove', move, { passive: false });
+  canvas.addEventListener('touchend', end, { passive: false });
+}
+
 function clearSignature(showStatus) {
   var canvas = document.getElementById('signatureCanvas');
   var ctx = canvas.getContext('2d');
@@ -2193,6 +2312,16 @@ function clearSignature(showStatus) {
 
   if (showStatus) {
     setStatus('Unterschrift gelöscht.', 'ok');
+  }
+}
+
+function clearBetreiberSignature(showStatus) {
+  var canvas = document.getElementById('betreiberSignatureCanvas');
+  var ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  betreiberSignatureDirty = false;
+  if (showStatus) {
+    setStatus('Betreiber-Unterschrift gelöscht.', 'ok');
   }
 }
 
@@ -2244,11 +2373,37 @@ function updateBetreiberSignatureVisibility() {
   }
 }
 
+function drawBetreiberSignatureFromDataUrl(dataUrl) {
+  clearBetreiberSignature(false);
+  var canvas = document.getElementById('betreiberSignatureCanvas');
+  var ctx = canvas.getContext('2d');
+  var img = new Image();
+  img.onload = function () {
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    betreiberSignatureDirty = true;
+  };
+  img.src = dataUrl;
+}
+
+function updateBetreiberSignatureVisibility() {
+  var wrap = document.getElementById('betreiberSignatureWrap');
+  var checked = document.querySelector('input[name="dokumentation_einweisungBetreiber"]:checked');
+  var isJa = checked && checked.value === 'Ja';
+  wrap.classList.toggle('hidden', !isJa);
+  if (!isJa) {
+    clearBetreiberSignature(false);
+  }
+}
+
 function setStatus(message, type) {
   var el = document.getElementById('status');
 
   el.textContent = message || '';
   el.className = 'status ' + (type === 'error' ? 'error' : 'ok');
+}
+
+function formatDateTimeDisplay(value) {
+  return (value || '').replace('T', ' ');
 }
 
 function formatDateTimeDisplay(value) {
@@ -2376,3 +2531,4 @@ function getErrorText(err) {
 
   return err.message || String(err);
 }
+

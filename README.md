@@ -1,3 +1,5 @@
+# :copyright RMO
+
 # Inbetriebnahmeprotokoll DX Kühler Outdoor
 
 Lokale, browserbasierte Web-App zur Erstellung von Inbetriebnahmeprotokollen für DX Kühler Outdoor.
