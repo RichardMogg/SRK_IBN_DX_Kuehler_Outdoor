@@ -833,7 +833,7 @@ function getProtocolValidationIssues(data, label) {
   validateBoolGroup(issues, prefix, FIELD_GROUPS.dokumentation, pruefung.dokumentation || {}, 'Dokumentation');
 
   requireValue(issues, prefix, unterschrift.techniker, 'Technikername bei Signatur fehlt');
-  requireValue(issues, prefix, unterschrift.datum, SIGNATURE_DATE_MISSING);
+  requireValue(issues, prefix, unterschrift.datum, 'Signatur-Datum fehlt');
 
   if (!unterschrift.vorhanden) {
     issues.push(prefix + 'Unterschrift fehlt');
@@ -1037,7 +1037,7 @@ function updateSummaries() {
   document.getElementById('summaryInnen').textContent = document.querySelectorAll('.indoor-card').length + ' Rackkühlgerät(e)';
   document.getElementById('summaryBemerkungen').textContent = getInputValue(document.getElementById('bemerkungenText')) ? 'Bemerkung vorhanden' : 'keine Bemerkung';
   document.getElementById('summaryFotos').textContent = (currentPhotos.length + currentAussenPhotos.length + countIndoorFiles()) + ' Datei(en) ausgewählt';
-  document.getElementById('summaryUnterschrift').textContent = signatureDirty ? 'Unterschrift vorhanden' : SIGNATURE_SUMMARY_DEFAULT;
+  document.getElementById('summaryUnterschrift').textContent = signatureDirty ? 'Unterschrift vorhanden' : 'Techniker, Unterschrift, Ort';
 }
 
 function countIndoorFiles() {
@@ -1635,7 +1635,7 @@ function buildPrintContent(data) {
   if (u.betreiberDataUrl) {
     html += '<div><b>Unterschrift Betreiber</b><div class="sig"><img src="' + e(u.betreiberDataUrl) + '"></div></div>';
   }
-  html += '<div class="ort"><b>Ort</b><br>' + e(u.ort || '') + '<br><br>' + e(u.datum || '') + '</div>';
+  html += '<div class="ort"><b>Ort Datum</b><br><br>' + e(u.ortDatum || '') + '</div>';
   html += '</div>';
 
   html += '</div>';
