@@ -1001,13 +1001,18 @@ function deleteProtocol(index) {
 
 function updateEditModeUI() {
   var banner = document.getElementById('editBanner');
+  var bottomButton = document.getElementById('bottomTakeButton');
 
   if (editingIndex !== null) {
     banner.className = 'edit-banner active';
     banner.textContent = 'Bearbeitungsmodus aktiv: Beim Übernehmen wird das geladene Protokoll aktualisiert.';
+    bottomButton.textContent = 'Änderung speichern';
+    bottomButton.className = 'btn-edit-save';
   } else {
     banner.className = 'edit-banner';
     banner.textContent = '';
+    bottomButton.textContent = 'Übernehmen';
+    bottomButton.className = 'btn-brand';
   }
 }
 
@@ -1702,10 +1707,10 @@ function buildPrintCss() {
     'th,td{border:1px solid #111;padding:1.3mm;vertical-align:top}',
     'th{background:#eee}',
     '.sign-grid{display:grid;grid-template-columns:1fr 1fr;border:1px solid #111;margin-top:6mm}',
-    '.sign-grid>div{min-height:30mm;padding:2mm;border-right:1px solid #111}',
+    '.sign-grid>div{min-height:24mm;padding:2mm;border-right:1px solid #111}',
     '.sign-grid>div:last-child{border-right:0}',
-    '.sig{height:22mm;margin-top:2mm}',
-    '.sig img{max-height:22mm;max-width:100%}',
+    '.sig{height:17.6mm;margin-top:2mm}',
+    '.sig img{max-height:17.6mm;max-width:100%}',
     '.ort{text-align:center;font-size:13px}',
     '@media print{.print-page{margin:0;page-break-after:always}}'
   ].join('');

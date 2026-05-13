@@ -493,6 +493,11 @@ button:disabled {
   color: #fff;
 }
 
+.btn-edit-save {
+  background: #fed7aa;
+  color: #9a3412;
+}
+
 .btn-secondary {
   background: var(--accent);
   color: #111827;
