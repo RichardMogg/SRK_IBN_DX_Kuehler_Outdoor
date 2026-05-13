@@ -1,6 +1,17 @@
 # Inbetriebnahmeprotokoll DX Kühler Outdoor
 
-Lokale browserbasierte Web-App zur Erstellung von Inbetriebnahmeprotokollen für DX Kühler Outdoor.
+Lokale, browserbasierte Web-App zur Erstellung von Inbetriebnahmeprotokollen für DX Kühler Outdoor.
+
+## Überblick
+
+Die Anwendung läuft ohne Backend direkt im Browser und bietet:
+
+- Erfassung aller Protokollabschnitte in einer strukturierten Formularoberfläche
+- Verwaltung mehrerer Protokolle in einer lokalen Liste
+- JSON-Import / JSON-Export
+- CSV-Export
+- ZIP-Export inkl. Druckansicht/PDF und Dateianhängen
+- Signaturfelder für Techniker und (optional) Betreiber
 
 ## Projektstruktur
 
@@ -8,7 +19,8 @@ Lokale browserbasierte Web-App zur Erstellung von Inbetriebnahmeprotokollen für
 /
 ├─ index.html
 ├─ assets/
-│  └─ Schrack-Technik_LOGO.svg
+│  ├─ logo.svg
+│  └─ datacenter_background.svg
 ├─ css/
 │  └─ app.css
 ├─ data/
@@ -18,28 +30,22 @@ Lokale browserbasierte Web-App zur Erstellung von Inbetriebnahmeprotokollen für
 │  └─ app.js
 └─ vendor/
    └─ html2pdf.bundle.min.js
+```
 
+## Lokale Nutzung
 
-function addCollapseButtonToDetails(detailsSelector, bodySelector, buttonText, targetName) {
-  document.querySelectorAll(detailsSelector).forEach(function (section) {
-    var body = section.querySelector(bodySelector);
+Da es eine statische Web-App ist, reicht ein lokaler Webserver, z. B.:
 
-    if (!body || hasDirectCollapseButton(body)) {
-      return;
-    }
+```bash
+python -m http.server 8000
+```
 
-    var button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'btn-light collapse-section-button';
-    button.setAttribute('data-collapse-button', 'true');
-    button.setAttribute('data-collapse-target', targetName);
-    button.textContent = buttonText;
+Dann im Browser öffnen:
 
-    button.addEventListener('click', function () {
-      section.open = false;
-      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
+- `http://localhost:8000`
 
-    body.appendChild(button);
-  });
-}
+## Hinweise
+
+- Daten werden lokal im Browser gespeichert (Local Storage).
+- Für PDF/ZIP-Export müssen die eingebundenen Browser-Bibliotheken geladen werden.
+- Bei Änderungen an CSS/JS kann ein Hard-Reload (`Strg+F5`) nötig sein.
