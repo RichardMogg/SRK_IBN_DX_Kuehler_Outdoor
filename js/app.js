@@ -2,6 +2,8 @@
 
 var lineBreak = String.fromCharCode(10);
 var csvLineBreak = String.fromCharCode(13, 10);
+var SIGNATURE_SUMMARY_DEFAULT = 'Techniker, Unterschrift, Ort';
+var SIGNATURE_DATE_MISSING = 'Signatur-Tag fehlt';
 
 var indoorCounter = 0;
 var signatureDirty = false;
