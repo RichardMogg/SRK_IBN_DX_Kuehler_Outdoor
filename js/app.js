@@ -524,22 +524,19 @@ function collectProtocol() {
     },
     bemerkungen: getInputValue(document.getElementById('bemerkungenText')),
     fotos: collectPhotoMeta(),
-    unterschrift: {
-      techniker: getInputValue(document.getElementById('signTechnikerInput')),
-      ort: getInputValue(document.getElementById('signOrtInput')),
-      datum: getInputValue(document.getElementById('signDatumInput')),
-      ortDatum: [getInputValue(document.getElementById('signOrtInput')), getInputValue(document.getElementById('signDatumInput'))].filter(Boolean).join(', '),
-      ort: getInputValue(document.getElementById('signOrtInput')),
-      datum: getInputValue(document.getElementById('signDatumInput')),
-      ortDatum: [getInputValue(document.getElementById('signOrtInput')), getInputValue(document.getElementById('signDatumInput'))].filter(Boolean).join(', '),
-      vorhanden: signatureDirty,
-      dataUrl: signatureDirty ? document.getElementById('signatureCanvas').toDataURL('image/png') : '',
-      betreiberVorhanden: betreiberSignatureDirty,
-      betreiberDataUrl: betreiberSignatureDirty ? document.getElementById('betreiberSignatureCanvas').toDataURL('image/png') : ''
-      dataUrl: signatureDirty ? document.getElementById('signatureCanvas').toDataURL('image/png') : '',
-      betreiberVorhanden: betreiberSignatureDirty,
-      betreiberDataUrl: betreiberSignatureDirty ? document.getElementById('betreiberSignatureCanvas').toDataURL('image/png') : ''
-    }
+unterschrift: {
+  techniker: getInputValue(document.getElementById('signTechnikerInput')),
+  ort: getInputValue(document.getElementById('signOrtInput')),
+  datum: getInputValue(document.getElementById('signDatumInput')),
+  ortDatum: [
+    getInputValue(document.getElementById('signOrtInput')),
+    getInputValue(document.getElementById('signDatumInput'))
+  ].filter(Boolean).join(', '),
+  vorhanden: signatureDirty,
+  dataUrl: signatureDirty ? document.getElementById('signatureCanvas').toDataURL('image/png') : '',
+  betreiberVorhanden: betreiberSignatureDirty,
+  betreiberDataUrl: betreiberSignatureDirty ? document.getElementById('betreiberSignatureCanvas').toDataURL('image/png') : ''
+}
   };
 
   data.pruefung.inneneinheiten = data.pruefung.rueckkuehlgeraete;
