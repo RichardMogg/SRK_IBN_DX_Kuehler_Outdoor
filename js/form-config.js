@@ -45,11 +45,21 @@ var FIELD_GROUPS = {
       type: 'decimal'
     },
     {
-    key: 'leitungslange',
-    label: 'Leitungslänge u. Dim. Innen-/Außengerät',
-    unit: 'm',
-     type: 'decimal'
-     },
+      key: 'leitungslaenge',
+      label: 'Leitungslänge Innen-/Außengerät',
+      unit: 'm',
+      type: 'decimal'
+    },
+    {
+      key: 'dimensionFluessigkeitsleitung',
+      label: "Dimension Flüssigkeitsleitung (mm oder Zoll, z. B. 10 oder 3/8)",
+      type: 'text'
+    },
+    {
+      key: 'dimensionGasleitung',
+      label: "Dimension Gasleitung (mm oder Zoll, z. B. 12 oder 1 1/2)",
+      type: 'text'
+    },
     {
       key: 'mitStickstoffGeloetet',
       label: 'Mit Stickstoff gelötet',
