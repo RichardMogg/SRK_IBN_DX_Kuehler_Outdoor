@@ -300,11 +300,18 @@ function hasDirectCollapseButton(body) {
 
 function setDefaultDateTime() {
   var field = document.querySelector('[data-field="datumUhrzeit"]');
+  var signDateField = document.getElementById('signDatumInput');
 
   if (field && !field.value) {
     var now = new Date();
     now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
     field.value = now.toISOString().slice(0, 16);
+  }
+
+  if (signDateField && !signDateField.value) {
+    var today = new Date();
+    today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+    signDateField.value = today.toISOString().slice(0, 10);
   }
 }
 
@@ -493,7 +500,9 @@ function collectProtocol() {
     fotos: collectPhotoMeta(),
     unterschrift: {
       techniker: getInputValue(document.getElementById('signTechnikerInput')),
-      ortDatum: getInputValue(document.getElementById('ortDatumInput')),
+      ort: getInputValue(document.getElementById('signOrtInput')),
+      datum: getInputValue(document.getElementById('signDatumInput')),
+      ortDatum: [getInputValue(document.getElementById('signOrtInput')), getInputValue(document.getElementById('signDatumInput'))].filter(Boolean).join(', '),
       vorhanden: signatureDirty,
       dataUrl: signatureDirty ? document.getElementById('signatureCanvas').toDataURL('image/png') : '',
       betreiberVorhanden: betreiberSignatureDirty,
@@ -664,7 +673,8 @@ function fillFormFromProtocol(data) {
 
   setInputValue(document.getElementById('bemerkungenText'), data.bemerkungen || '');
   setInputValue(document.getElementById('signTechnikerInput'), data.unterschrift && data.unterschrift.techniker || '');
-  setInputValue(document.getElementById('ortDatumInput'), data.unterschrift && data.unterschrift.ortDatum || '');
+  setInputValue(document.getElementById('signOrtInput'), data.unterschrift && (data.unterschrift.ort || data.unterschrift.ortDatum) || '');
+  setInputValue(document.getElementById('signDatumInput'), data.unterschrift && data.unterschrift.datum || '');
 
   document.getElementById('innenContainer').innerHTML = '';
   indoorCounter = 0;
@@ -816,6 +826,7 @@ function getProtocolValidationIssues(data, label) {
   validateBoolGroup(issues, prefix, FIELD_GROUPS.dokumentation, pruefung.dokumentation || {}, 'Dokumentation');
 
   requireValue(issues, prefix, unterschrift.techniker, 'Technikername bei Signatur fehlt');
+  requireValue(issues, prefix, unterschrift.datum, 'Signatur-Datum fehlt');
 
   if (!unterschrift.vorhanden) {
     issues.push(prefix + 'Unterschrift fehlt');
@@ -1497,6 +1508,8 @@ function buildCsvForProtocols(records) {
 
     rows.push([record.recordId, 'Bemerkungen', '', 'Bemerkungen', data.bemerkungen || '', '', '']);
     rows.push([record.recordId, 'Unterschrift', '', 'Techniker', data.unterschrift && data.unterschrift.techniker || '', data.unterschrift && data.unterschrift.vorhanden ? 'Unterschrift eingebettet' : 'keine Unterschrift', '']);
+    rows.push([record.recordId, 'Unterschrift', '', 'Ort', data.unterschrift && (data.unterschrift.ort || '') || '', '', '']);
+    rows.push([record.recordId, 'Unterschrift', '', 'Datum', data.unterschrift && (data.unterschrift.datum || '') || '', '', '']);
 
     addCsvAttachmentMetaRows(rows, record.recordId, data.fotos || {});
   });
