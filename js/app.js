@@ -831,7 +831,7 @@ function getProtocolValidationIssues(data, label) {
   validateBoolGroup(issues, prefix, FIELD_GROUPS.dokumentation, pruefung.dokumentation || {}, 'Dokumentation');
 
   requireValue(issues, prefix, unterschrift.techniker, 'Technikername bei Signatur fehlt');
-  requireValue(issues, prefix, unterschrift.datum, 'Signatur-Tag fehlt');
+  requireValue(issues, prefix, unterschrift.datum, 'Signatur-Datum fehlt');
 
   if (!unterschrift.vorhanden) {
     issues.push(prefix + 'Unterschrift fehlt');
@@ -1633,7 +1633,7 @@ function buildPrintContent(data) {
   if (u.betreiberDataUrl) {
     html += '<div><b>Unterschrift Betreiber</b><div class="sig"><img src="' + e(u.betreiberDataUrl) + '"></div></div>';
   }
-  html += '<div class="ort"><b>Ort</b><br>' + e(u.ort || '') + '<br><br>' + e(u.datum || '') + '</div>';
+  html += '<div class="ort"><b>Ort Datum</b><br><br>' + e(u.ortDatum || '') + '</div>';
   html += '</div>';
 
   html += '</div>';
