@@ -1720,28 +1720,27 @@ function printChecklistTable(title, list) {
   return html;
 }
 
-function printFieldTable(title, data, config, showUnitColumn) {
+
 function printFieldTable(title, data, config, showUnitColumn) {
   var rows = config.map(function (item) {
     return [item.label, data[item.key] || '', item.unit || ''];
   });
 
   return printKeyValueTable(title, rows, showUnitColumn !== false);
-  return printKeyValueTable(title, rows, showUnitColumn !== false);
 }
 
 function printKeyValueTable(title, rows, showUnitColumn) {
-function printKeyValueTable(title, rows, showUnitColumn) {
   var html = sectionTitle(title);
   var withUnit = showUnitColumn !== false;
-  var withUnit = showUnitColumn !== false;
 
-  html += withUnit ? '<table><tr><th>Feld</th><th>Wert</th><th>Einheit</th></tr>' : '<table><tr><th>Feld</th><th>Wert</th></tr>';
-  html += withUnit ? '<table><tr><th>Feld</th><th>Wert</th><th>Einheit</th></tr>' : '<table><tr><th>Feld</th><th>Wert</th></tr>';
+  html += withUnit
+    ? '<table><tr><th>Feld</th><th>Wert</th><th>Einheit</th></tr>'
+    : '<table><tr><th>Feld</th><th>Wert</th></tr>';
 
   rows.forEach(function (r) {
-    html += withUnit ? '<tr><td>' + e(r[0]) + '</td><td>' + e(r[1]) + '</td><td>' + e(r[2]) + '</td></tr>' : '<tr><td>' + e(r[0]) + '</td><td>' + e(r[1]) + '</td></tr>';
-    html += withUnit ? '<tr><td>' + e(r[0]) + '</td><td>' + e(r[1]) + '</td><td>' + e(r[2]) + '</td></tr>' : '<tr><td>' + e(r[0]) + '</td><td>' + e(r[1]) + '</td></tr>';
+    html += withUnit
+      ? '<tr><td>' + e(r[0]) + '</td><td>' + e(r[1]) + '</td><td>' + e(r[2]) + '</td></tr>'
+      : '<tr><td>' + e(r[0]) + '</td><td>' + e(r[1]) + '</td></tr>';
   });
 
   html += '</table>';
