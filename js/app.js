@@ -1035,7 +1035,7 @@ function updateSummaries() {
   document.getElementById('summaryInnen').textContent = document.querySelectorAll('.indoor-card').length + ' Rackkühlgerät(e)';
   document.getElementById('summaryBemerkungen').textContent = getInputValue(document.getElementById('bemerkungenText')) ? 'Bemerkung vorhanden' : 'keine Bemerkung';
   document.getElementById('summaryFotos').textContent = (currentPhotos.length + currentAussenPhotos.length + countIndoorFiles()) + ' Datei(en) ausgewählt';
-  document.getElementById('summaryUnterschrift').textContent = signatureDirty ? 'Unterschrift vorhanden' : 'Techniker, Unterschrift, Ort/Datum';
+  document.getElementById('summaryUnterschrift').textContent = signatureDirty ? 'Unterschrift vorhanden' : 'Techniker, Unterschrift, Ort';
 }
 
 function countIndoorFiles() {
