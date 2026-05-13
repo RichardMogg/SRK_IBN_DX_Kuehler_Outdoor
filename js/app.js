@@ -37,7 +37,6 @@ window.addEventListener('load', function () {
   addCollapseButtons();
   initSignatureCanvas();
   initBetreiberSignatureCanvas();
-  initBetreiberSignatureCanvas();
   loadSharedLogoSvg();
   loadState();
   restoreDraft();
@@ -2221,7 +2220,7 @@ function initBetreiberSignatureCanvas() {
       y: (touch.clientY - rect.top) * (canvas.height / rect.height)
     };
   }
-
+initSignatureCanvas();
   function start(evt) {
     evt.preventDefault();
     betreiberSignatureDrawing = true;
@@ -2252,47 +2251,6 @@ function initBetreiberSignatureCanvas() {
   canvas.addEventListener('touchend', end, { passive: false });
 }
 
-function initBetreiberSignatureCanvas() {
-  var canvas = document.getElementById('betreiberSignatureCanvas');
-  var ctx = canvas.getContext('2d');
-
-  ctx.lineWidth = 4;
-  ctx.lineCap = 'round';
-  ctx.strokeStyle = '#111827';
-
-  function pos(evt) {
-    var rect = canvas.getBoundingClientRect();
-    var touch = evt.touches && evt.touches[0] ? evt.touches[0] : evt;
-    return {
-      x: (touch.clientX - rect.left) * (canvas.width / rect.width),
-      y: (touch.clientY - rect.top) * (canvas.height / rect.height)
-    };
-  }
-
-  function start(evt) {
-    evt.preventDefault();
-    betreiberSignatureDrawing = true;
-    var p = pos(evt);
-    ctx.beginPath();
-    ctx.moveTo(p.x, p.y);
-  }
-
-  function move(evt) {
-    if (!betreiberSignatureDrawing) return;
-    evt.preventDefault();
-    var p = pos(evt);
-    ctx.lineTo(p.x, p.y);
-    ctx.stroke();
-    betreiberSignatureDirty = true;
-  }
-
-  function end(evt) {
-    if (betreiberSignatureDrawing) evt.preventDefault();
-    betreiberSignatureDrawing = false;
-  }
-
-
-}
 
 function clearSignature(showStatus) {
   var canvas = document.getElementById('signatureCanvas');
@@ -2307,15 +2265,6 @@ function clearSignature(showStatus) {
   }
 }
 
-function clearBetreiberSignature(showStatus) {
-  var canvas = document.getElementById('betreiberSignatureCanvas');
-  var ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  betreiberSignatureDirty = false;
-  if (showStatus) {
-    setStatus('Betreiber-Unterschrift gelöscht.', 'ok');
-  }
-}
 
 function clearBetreiberSignature(showStatus) {
   var canvas = document.getElementById('betreiberSignatureCanvas');
@@ -2343,17 +2292,6 @@ function drawSignatureFromDataUrl(dataUrl) {
   img.src = dataUrl;
 }
 
-function drawBetreiberSignatureFromDataUrl(dataUrl) {
-  clearBetreiberSignature(false);
-  var canvas = document.getElementById('betreiberSignatureCanvas');
-  var ctx = canvas.getContext('2d');
-  var img = new Image();
-  img.onload = function () {
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-    betreiberSignatureDirty = true;
-  };
-  img.src = dataUrl;
-}
 
 function updateBetreiberSignatureVisibility() {
   var wrap = document.getElementById('betreiberSignatureWrap');
@@ -2377,15 +2315,6 @@ function drawBetreiberSignatureFromDataUrl(dataUrl) {
   img.src = dataUrl;
 }
 
-function updateBetreiberSignatureVisibility() {
-  var wrap = document.getElementById('betreiberSignatureWrap');
-  var checked = document.querySelector('input[name="dokumentation_einweisungBetreiber"]:checked');
-  var isJa = checked && checked.value === 'Ja';
-  wrap.classList.toggle('hidden', !isJa);
-  if (!isJa) {
-    clearBetreiberSignature(false);
-  }
-}
 
 function setStatus(message, type) {
   var el = document.getElementById('status');
@@ -2394,9 +2323,6 @@ function setStatus(message, type) {
   el.className = 'status ' + (type === 'error' ? 'error' : 'ok');
 }
 
-function formatDateTimeDisplay(value) {
-  return (value || '').replace('T', ' ');
-}
 
 function formatDateTimeDisplay(value) {
   return (value || '').replace('T', ' ');
