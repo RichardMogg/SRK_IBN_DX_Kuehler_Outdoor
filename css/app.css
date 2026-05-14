@@ -23,6 +23,14 @@
   --closed-bg: #f8fafc;
   --edit-bg: #fef3c7;
   --edit-text: #92400e;
+
+--card-glass: rgba(255, 255, 255, 0.82);
+--card-glass-strong: rgba(255, 255, 255, 0.90);
+--field-glass: rgba(255, 255, 255, 0.72);
+--field-glass-focus: rgba(255, 255, 255, 0.94);
+--soft-glass: rgba(248, 250, 252, 0.72);
+--blue-glass: rgba(230, 241, 251, 0.78);
+
 }
 
 html,
@@ -56,7 +64,11 @@ body {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(243, 246, 250, 0.58), rgba(243, 246, 250, 0.72));
+  background: linear-gradient(
+    180deg,
+    rgba(243, 246, 250, 0.26),
+    rgba(243, 246, 250, 0.38)
+  );
 }
 
 .page-bg::after {
@@ -155,12 +167,14 @@ main {
 }
 
 details.section {
-  background: var(--card);
-  border: 1px solid var(--border);
+  background: var(--card-glass);
+  border: 1px solid rgba(203, 213, 225, 0.88);
   border-radius: 14px;
   margin-bottom: 10px;
   overflow: hidden;
-  box-shadow: 0 1px 5px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 1px 8px rgba(15, 23, 42, 0.12);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
 }
 
 details.section > summary {
@@ -170,7 +184,7 @@ details.section > summary {
   padding: 14px;
   font-size: 17px;
   font-weight: 900;
-  background: var(--closed-bg);
+  background: rgba(248, 250, 252, 0.78);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -178,7 +192,7 @@ details.section > summary {
 }
 
 details.section[open] > summary {
-  background: var(--open-bg);
+  background: rgba(230, 241, 251, 0.82);
   border-bottom: 1px solid var(--border);
 }
 
@@ -231,10 +245,13 @@ textarea {
   width: 100%;
   min-height: 48px;
   padding: 10px 11px;
-  border: 1px solid var(--border);
+  border: 1px solid rgba(148, 163, 184, 0.78);
   border-radius: 10px;
   font-size: 16px;
-  background: #fff;
+  background: var(--field-glass);
+  color: var(--text);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
 }
 
 textarea {
@@ -247,6 +264,7 @@ select:focus,
 textarea:focus {
   outline: 3px solid rgba(0, 92, 169, 0.22);
   border-color: var(--brand-dark);
+  background: var(--field-glass-focus);
 }
 
 .required-hint {
@@ -284,7 +302,7 @@ textarea:focus {
 .form-row {
   border: 1px solid var(--border);
   border-radius: 12px;
-  background: #fff;
+   background: var(--card-glass-strong);
   padding: 10px;
   margin-bottom: 10px;
 }
@@ -310,7 +328,7 @@ textarea:focus {
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 9px;
-  background: #f8fafc;
+   background: var(--soft-glass);
   font-weight: 800;
 }
 
@@ -325,7 +343,9 @@ textarea:focus {
   border-left: 7px solid var(--brand);
   border-radius: 14px;
   margin-bottom: 10px;
-  background: #fff;
+    background: var(--card-glass);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
   overflow: hidden;
 }
 
@@ -335,7 +355,7 @@ textarea:focus {
   padding: 14px;
   font-size: 16px;
   font-weight: 900;
-  background: var(--brand-light);
+   background: var(--blue-glass);
   border-bottom: 1px solid transparent;
 }
 
@@ -365,7 +385,7 @@ textarea:focus {
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 8px;
-  background: #fff;
+  background: var(--card-glass-strong);
 }
 
 canvas#signatureCanvas {
@@ -600,5 +620,32 @@ footer {
     max-width: 760px;
     margin: 0 auto;
   }
+@media (max-width: 640px) {
+  .page-bg::before {
+    background: linear-gradient(
+      180deg,
+      rgba(243, 246, 250, 0.16),
+      rgba(243, 246, 250, 0.30)
+    );
+  }
+
+  details.section,
+  .indoor-card {
+    background: rgba(255, 255, 255, 0.76);
+  }
+
+  input,
+  select,
+  textarea {
+    background: rgba(255, 255, 255, 0.66);
+  }
+
+  .check-row,
+  .form-row,
+  .signature-wrap {
+    background: rgba(255, 255, 255, 0.78);
+  }
+}
+
 }
 
