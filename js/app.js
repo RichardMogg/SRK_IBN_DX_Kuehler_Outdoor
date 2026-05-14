@@ -428,7 +428,6 @@ function addIndoorUnit(openAfterAdd, data) {
     '<div class="indoor-body">' +
       '<div class="grid">' +
         '<div class="field"><label>Hersteller <span class="required-hint">*</span></label><input data-rk-field="hersteller" required autocomplete="off"></div>' +
-        '<div class="field"><label>Hersteller <span class="required-hint">*</span></label><input data-rk-field="hersteller" required autocomplete="off"></div>' +
         '<div class="field"><label>Modellbezeichnung Rackkühlgerät <span class="required-hint">*</span></label><input data-rk-field="modell" required autocomplete="off"></div>' +
         '<div class="field"><label>Seriennummer <span class="required-hint">*</span></label><input data-rk-field="seriennummer" required autocomplete="off"></div>' +
         '<div class="field"><label>Bezeichnung / Standort</label><input data-rk-field="bezeichnung" autocomplete="off"></div>' +
@@ -475,7 +474,6 @@ addCollapseButtons();
 }
 
 function fillIndoorCard(card, data) {
-  setInputValue(card.querySelector('[data-rk-field="hersteller"]'), data.hersteller || '');
   setInputValue(card.querySelector('[data-rk-field="hersteller"]'), data.hersteller || '');
   setInputValue(card.querySelector('[data-rk-field="modell"]'), data.modell || data.type || '');
   setInputValue(card.querySelector('[data-rk-field="seriennummer"]'), data.seriennummer || '');
