@@ -434,7 +434,7 @@ function addIndoorUnit(openAfterAdd, data) {
         '<div class="field"><label>Bezeichnung / Standort</label><input data-rk-field="bezeichnung" autocomplete="off"></div>' +
         '<div class="field"><label>Bemerkung</label><input data-rk-field="bemerkung" autocomplete="off"></div>' +
       '</div>' +
-      '<div class="field"><label>Fotos Rückkühlgerät</label><input data-rk-photo="true" type="file" accept="image/*" multiple><div class="small-text">Fotos werden beim Übernehmen für den ZIP-Export zwischengespeichert.</div></div>' +
+      '<div class="field"><label>Fotos Rackkühlgerät</label><input data-rk-photo="true" type="file" accept="image/*" multiple><div class="small-text">Fotos werden beim Übernehmen für den ZIP-Export zwischengespeichert.</div></div>' +
       '<div class="photo-list" data-rk-photo-list="true">Keine Fotos ausgewählt.</div>' +
 '<button type="button" class="btn-danger" data-remove-rk="true">Rackkühlgerät entfernen</button>' +
 '</div>';
@@ -453,7 +453,7 @@ function addIndoorUnit(openAfterAdd, data) {
 
   card.querySelector('[data-remove-rk="true"]').addEventListener('click', function () {
     if (document.querySelectorAll('.indoor-card').length <= 1) {
-      setStatus('Mindestens ein Rückkühlgerät bleibt im Formular erhalten.', 'error');
+      setStatus('Mindestens ein Rackkühlgerät bleibt im Formular erhalten.', 'error');
       return;
     }
 
@@ -856,7 +856,7 @@ function getProtocolValidationIssues(data, label) {
     requireValue(issues, prefix, unit.hersteller, 'Hersteller Rackkühlgerät ' + (index + 1) + ' fehlt');
     requireValue(issues, prefix, unit.hersteller, 'Hersteller Rackkühlgerät ' + (index + 1) + ' fehlt');
     requireValue(issues, prefix, unit.modell || unit.type, 'Modellbezeichnung Rackkühlgerät ' + (index + 1) + ' fehlt');
-    requireValue(issues, prefix, unit.seriennummer, 'Seriennummer Rückkühlgerät ' + (index + 1) + ' fehlt');
+    requireValue(issues, prefix, unit.seriennummer, 'Seriennummer Rackkühlgerät ' + (index + 1) + ' fehlt');
   });
 
   validateChecklist(issues, prefix, pruefung.inbetriebnahmeinhalt || [], 'Inbetriebnahmeinhalt');
@@ -1553,14 +1553,14 @@ function buildCsvForProtocols(records) {
     addCsvChecklist(rows, record.recordId, p.inbetriebnahmeinhalt || [], 'Inbetriebnahmeinhalt', '');
 
     (p.rueckkuehlgeraete || []).forEach(function (unit, index) {
-      var name = 'Rückkühlgerät ' + (index + 1);
+      var name = 'Rackkühlgerät ' + (index + 1);
 
-      rows.push([record.recordId, 'Rückkühlgerät', name, 'Hersteller', unit.hersteller || '', '', '']);
-      rows.push([record.recordId, 'Rückkühlgerät', name, 'Hersteller', unit.hersteller || '', '', '']);
-      rows.push([record.recordId, 'Rückkühlgerät', name, 'Modellbezeichnung', unit.modell || '', '', '']);
-      rows.push([record.recordId, 'Rückkühlgerät', name, 'Seriennummer', unit.seriennummer || '', '', '']);
-      rows.push([record.recordId, 'Rückkühlgerät', name, 'Bezeichnung / Standort', unit.bezeichnung || '', '', '']);
-      rows.push([record.recordId, 'Rückkühlgerät', name, 'Bemerkung', unit.bemerkung || '', '', '']);
+      rows.push([record.recordId, 'Rackkühlgerät', name, 'Hersteller', unit.hersteller || '', '', '']);
+      rows.push([record.recordId, 'Rackkühlgerät', name, 'Hersteller', unit.hersteller || '', '', '']);
+      rows.push([record.recordId, 'Rackkühlgerät', name, 'Modellbezeichnung', unit.modell || '', '', '']);
+      rows.push([record.recordId, 'Rackkühlgerät', name, 'Seriennummer', unit.seriennummer || '', '', '']);
+      rows.push([record.recordId, 'Rackkühlgerät', name, 'Bezeichnung / Standort', unit.bezeichnung || '', '', '']);
+      rows.push([record.recordId, 'Rackkühlgerät', name, 'Bemerkung', unit.bemerkung || '', '', '']);
     });
 
     addCsvFieldGroup(rows, record.recordId, 'Kältekreislauf', p.kaeltekreislauf || {}, FIELD_GROUPS.kaeltekreislauf);
@@ -1616,7 +1616,7 @@ function addCsvAttachmentMetaRows(rows, recordId, fotos) {
 
   (fotos.rueckkuehlgeraete || []).forEach(function (u) {
     (u.fotos || []).forEach(function (f) {
-      rows.push([recordId, 'Fotos/Dateien', 'Rückkühlgerät ' + u.nummer, f.name, f.type || '', formatBytes(f.size || 0), '']);
+      rows.push([recordId, 'Fotos/Dateien', 'Rackkühlgerät ' + u.nummer, f.name, f.type || '', formatBytes(f.size || 0), '']);
     });
   });
 }
@@ -1658,15 +1658,25 @@ function buildPrintContent(data) {
   html += '<div><b>Datum/Uhrzeit:</b> ' + e(formatDateTimeDisplay(k.datumUhrzeit)) + '<br><b>Techniker:</b> ' + e(k.techniker) + '<br><b>Erstinbetriebnahme:</b> ' + e(k.erstinbetriebnahme) + '<br><b>Wiederholte Inbetriebnahme:</b> ' + e(k.wiederholteInbetriebnahme) + '</div>';
   html += '</div>';
 
-  html += sectionTitle('Geräte');
-  html += '<div class="top-grid">';
-  html += '<div><b>Hersteller / Modellbezeichnung Außengerät / Seriennummer</b><br>' + e(aussen.hersteller) + '<br>' + e(aussen.modell) + '<br>' + e(aussen.seriennummer) + '</div>';
-  html += '<div><b>Hersteller / Modellbezeichnung Außengerät / Seriennummer</b><br>' + e(aussen.hersteller) + '<br>' + e(aussen.modell) + '<br>' + e(aussen.seriennummer) + '</div>';
-  html += '<div><b>Modellbezeichnung Rückkühlgerät(-e) / Seriennummer</b><br>' + (p.rueckkuehlgeraete || []).map(function (unit, index) {
-    return e((index + 1) + '. ' + (unit.hersteller || '') + ' / ' + (unit.modell || '') + ' / ' + (unit.seriennummer || ''));
-    return e((index + 1) + '. ' + (unit.hersteller || '') + ' / ' + (unit.modell || '') + ' / ' + (unit.seriennummer || ''));
-  }).join('<br>') + '</div>';
-  html += '</div>';
+html += sectionTitle('Geräte');
+html += '<div class="top-grid">';
+
+html += '<div><b>Hersteller / Modellbezeichnung Außengerät / Seriennummer</b><br>' +
+  e(aussen.hersteller) + '<br>' +
+  e(aussen.modell) + '<br>' +
+  e(aussen.seriennummer) +
+  '</div>';
+
+html += '<div><b>Modellbezeichnung Rackkühlgerät(e) / Seriennummer</b><br>' +
+  (p.rackkuehlgeraete || []).map(function (unit, index) {
+    return e((index + 1) + '. ' +
+      (unit.hersteller || '') + ' / ' +
+      (unit.modell || '') + ' / ' +
+      (unit.seriennummer || ''));
+  }).join('<br>') +
+  '</div>';
+
+html += '</div>';
 
   html += printChecklistTable('Inbetriebnahmeinhalt', p.inbetriebnahmeinhalt || []);
   html += printFieldTable('Kältekreislauf', p.kaeltekreislauf || {}, FIELD_GROUPS.kaeltekreislauf);
@@ -1694,7 +1704,18 @@ function buildPrintContent(data) {
   if (u.betreiberDataUrl) {
     html += '<div><b>Unterschrift Betreiber</b><div class="sig"><img src="' + e(u.betreiberDataUrl) + '"></div></div>';
   }
-  html += '<div class="ort"><b>Ort</b><br>' + e(u.ort || '') + '<br><br>' + e(u.datum || '') + '</div>';
+  var signOrt = String(u.ort || '').trim();
+var signDatum = String(u.datum || '').trim();
+
+if (signOrt === signDatum) {
+  signOrt = '';
+}
+
+html += '<div class="ort"><b>Ort / Datum</b><br>' +
+  e(signOrt) +
+  (signOrt && signDatum ? '<br>' : '') +
+  e(signDatum) +
+  '</div>';
   html += '</div>';
 
   html += '</div>';
