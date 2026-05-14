@@ -50,70 +50,48 @@
     </details>
 
     <form id="protocolForm" autocomplete="off">
-      <details class="section" id="sectionKopfdaten">
-        <summary>
-          <span>
-            2. Kopfdaten / Anlage
-            <span class="summary-sub" id="summaryKopfdaten">Anlagenerrichter, Anlagentyp, Datum/Uhrzeit, Techniker</span>
-          </span>
-        </summary>
+<details class="section" id="sectionKopfdaten">
+  <summary>
+    <span>
+      2. Kopfdaten / Anlage
+      <span class="summary-sub" id="summaryKopfdaten">Anlagenerrichter, Anlagentyp, Datum/Uhrzeit, Techniker</span>
+    </span>
+  </summary>
 
-        <div class="section-body" id="kopfdatenFields">
-          <div class="grid">
-            <div class="field">
-              <label>Anlagenerrichter</label>
-              <input data-field="anlagenerrichter" autocomplete="off">
-            </div>
+  <div class="section-body" id="kopfdatenFields">
+    <div class="grid">
+      <div class="field">
+        <label>Anlagenerrichter</label>
+        <input data-field="anlagenerrichter" autocomplete="off">
+      </div>
 
-            <div class="field">
-              <label>Anlagentyp <span class="required-hint">*</span></label>
-              <input data-field="anlagentyp" required autocomplete="off" value="DX Kühler Outdoor">
-            </div>
+      <div class="field">
+        <label>Anlagentyp <span class="required-hint">*</span></label>
+        <input data-field="anlagentyp" required autocomplete="off" value="DX Kühler Outdoor">
+      </div>
 
-            <div class="field">
-              <label>Datum/Uhrzeit <span class="required-hint">*</span></label>
-              <input type="datetime-local" data-field="datumUhrzeit" required>
-            </div>
+      <div class="field">
+        <label>Datum/Uhrzeit <span class="required-hint">*</span></label>
+        <input type="datetime-local" data-field="datumUhrzeit" required>
+      </div>
 
-            <div class="field">
-              <label>Techniker <span class="required-hint">*</span></label>
-              <input data-field="techniker" required autocomplete="off">
-            </div>
+      <div class="field">
+        <label>Techniker <span class="required-hint">*</span></label>
+        <input data-field="techniker" required autocomplete="off">
+      </div>
 
-          <div class="section-body" id="kopfdatenFields">
-  <div class="grid">
-    <div class="field">
-      <label>Anlagenerrichter</label>
-      <input data-field="anlagenerrichter" autocomplete="off">
-    </div>
+      <div class="field">
+        <label>Datum Erstinbetriebnahme <span class="required-hint">*</span></label>
+        <input type="date" data-field="erstinbetriebnahme">
+      </div>
 
-    <div class="field">
-      <label>Anlagentyp <span class="required-hint">*</span></label>
-      <input data-field="anlagentyp" required autocomplete="off" value="DX Kühler Outdoor">
-    </div>
-
-    <div class="field">
-      <label>Datum/Uhrzeit <span class="required-hint">*</span></label>
-      <input type="datetime-local" data-field="datumUhrzeit" required>
-    </div>
-
-    <div class="field">
-      <label>Techniker <span class="required-hint">*</span></label>
-      <input data-field="techniker" required autocomplete="off">
-    </div>
-
-    <div class="field">
-      <label>Datum Erstinbetriebnahme <span class="required-hint">*</span></label>
-      <input type="date" data-field="erstinbetriebnahme">
-    </div>
-
-    <div class="field">
-      <label>Datum wiederholte Inbetriebnahme <span class="required-hint">*</span></label>
-      <input type="date" data-field="wiederholteInbetriebnahme">
+      <div class="field">
+        <label>Datum wiederholte Inbetriebnahme <span class="required-hint">*</span></label>
+        <input type="date" data-field="wiederholteInbetriebnahme">
+      </div>
     </div>
   </div>
-</div>
-      </details>
+</details>
 
       <details class="section" id="sectionAussen">
        <summary>
@@ -427,8 +405,7 @@
 <script src="js/form-config.js?v=2.3" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
-<script src="js/app.js?v=2.5" defer></script>
-<link rel="stylesheet" href="css/app.css?v=1.1">
+<script src="js/app.js?v=2.6" defer></script>
 </body>
 </html>
 

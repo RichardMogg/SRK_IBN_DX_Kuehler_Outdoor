@@ -2219,7 +2219,7 @@ function initBetreiberSignatureCanvas() {
       y: (touch.clientY - rect.top) * (canvas.height / rect.height)
     };
   }
-initSignatureCanvas();
+
   function start(evt) {
     evt.preventDefault();
     betreiberSignatureDrawing = true;
