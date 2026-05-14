@@ -1656,27 +1656,27 @@ function buildPrintContent(data) {
   html += '<div><b>Datum/Uhrzeit:</b> ' + e(formatDateTimeDisplay(k.datumUhrzeit)) + '<br><b>Techniker:</b> ' + e(k.techniker) + '<br><b>Erstinbetriebnahme:</b> ' + e(k.erstinbetriebnahme) + '<br><b>Wiederholte Inbetriebnahme:</b> ' + e(k.wiederholteInbetriebnahme) + '</div>';
   html += '</div>';
 
+var rackUnits = p.rueckkuehlgeraete || p.inneneinheiten || [];
+
 html += sectionTitle('Geräte');
 html += '<div class="top-grid">';
 
 html += '<div><b>Hersteller / Modellbezeichnung Außengerät / Seriennummer</b><br>' +
-  e(aussen.hersteller) + '<br>' +
-  e(aussen.modell) + '<br>' +
-  e(aussen.seriennummer) +
+  e(aussen.hersteller || '') + '<br>' +
+  e(aussen.modell || aussen.type || '') + '<br>' +
+  e(aussen.seriennummer || '') +
   '</div>';
 
 html += '<div><b>Modellbezeichnung Rackkühlgerät(e) / Seriennummer</b><br>' +
-  (p.rackkuehlgeraete || []).map(function (unit, index) {
+  rackUnits.map(function (unit, index) {
     return e((index + 1) + '. ' +
       (unit.hersteller || '') + ' / ' +
-      (unit.modell || '') + ' / ' +
+      (unit.modell || unit.type || '') + ' / ' +
       (unit.seriennummer || ''));
   }).join('<br>') +
   '</div>';
 
 html += '</div>';
-
-  html += printChecklistTable('Inbetriebnahmeinhalt', p.inbetriebnahmeinhalt || []);
   html += printFieldTable('Kältekreislauf', p.kaeltekreislauf || {}, FIELD_GROUPS.kaeltekreislauf);
   html += printFieldTable('Dichtheitsprüfung', p.dichtheitspruefung || {}, FIELD_GROUPS.dichtheit);
 
