@@ -1806,68 +1806,18 @@ function buildPrintCss() {
     '@media print{.print-page{margin:0;page-break-after:always}}'
   ].join('');
 }
-function loadExternalScriptOnce(src, globalCheck) {
-  return new Promise(function (resolve, reject) {
-    if (globalCheck && globalCheck()) {
-      resolve();
-      return;
-    }
-
-    var existing = document.querySelector('script[src="' + src + '"]');
-
-    if (existing) {
-      existing.addEventListener('load', function () {
-        if (!globalCheck || globalCheck()) {
-          resolve();
-        } else {
-          reject(new Error('Bibliothek wurde geladen, aber globale Variable fehlt: ' + src));
-        }
-      });
-
-      existing.addEventListener('error', function () {
-        reject(new Error('Bibliothek konnte nicht geladen werden: ' + src));
-      });
-
-      return;
-    }
-
-    var script = document.createElement('script');
-    script.src = src;
-    script.async = false;
-
-    script.onload = function () {
-      if (!globalCheck || globalCheck()) {
-        resolve();
-      } else {
-        reject(new Error('Bibliothek wurde geladen, aber globale Variable fehlt: ' + src));
-      }
-    };
-
-    script.onerror = function () {
-      reject(new Error('Bibliothek konnte nicht geladen werden: ' + src));
-    };
-
-    document.head.appendChild(script);
-  });
-}
-
-
 
 async function ensurePdfLibrariesLoaded() {
   if (window.html2canvas && window.jspdf && window.jspdf.jsPDF) {
     return;
   }
 
-  await new Promise(function (resolve) {
-    setTimeout(resolve, 300);
-  });
-
-  if (window.html2canvas && window.jspdf && window.jspdf.jsPDF) {
-    return;
-  }
-
-  throw new Error('PDF-Bibliotheken html2canvas/jsPDF sind nicht geladen.');
+  throw new Error(
+    'PDF-Bibliotheken html2canvas/jsPDF sind nicht geladen. Prüfe vendor/html2canvas.min.js und vendor/jspdf.umd.min.js.'
+  );
 }
+
+
 
 async function generatePrintPdfBytes(data) {
   await ensurePdfLibrariesLoaded();
@@ -1888,6 +1838,12 @@ async function generatePrintPdfBytes(data) {
     if (!page) {
       throw new Error('PDF-Druckseite konnte nicht erstellt werden.');
     }
+
+    await new Promise(function (resolve) {
+      requestAnimationFrame(function () {
+        requestAnimationFrame(resolve);
+      });
+    });
 
     var pdf = new window.jspdf.jsPDF('p', 'mm', 'a4');
 
