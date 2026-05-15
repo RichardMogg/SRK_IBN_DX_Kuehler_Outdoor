@@ -1850,6 +1850,7 @@ async function generatePrintPdfBytes(data) {
 
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, sliceCanvas.width, sliceCanvas.height);
+
       ctx.drawImage(
         canvas,
         0,
