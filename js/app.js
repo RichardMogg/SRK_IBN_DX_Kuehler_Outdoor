@@ -1113,12 +1113,15 @@ function resetCurrentForm(showStatus) {
   document.getElementById('fotoInput').value = '';
   document.getElementById('aussenFotoInput').value = '';
 
-  clearSignature(false);
-  setDefaultDateTime();
-  addIndoorUnit(false);
-  updateAllAttachmentLists();
-  updateEditModeUI();
-  updateSummaries();
+clearSignature(false);
+clearBetreiberSignature(false);
+updateBetreiberSignatureVisibility();
+
+setDefaultDateTime();
+addIndoorUnit(false);
+updateAllAttachmentLists();
+updateEditModeUI();
+updateSummaries();
 
   if (showStatus) {
     setStatus('Formular geleert.', 'ok');
