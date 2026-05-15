@@ -700,5 +700,73 @@ textarea {
   background: var(--field-card-bg);
 }
 
+
+/* Wiederherstellung Feldgrößen / Auswahlfelder */
+input,
+select,
+textarea {
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 11px;
+  border: 1px solid rgba(148, 163, 184, 0.78);
+  border-radius: 10px;
+  font-size: 16px;
+  background: var(--input-bg);
+  color: var(--text);
+  box-sizing: border-box;
+}
+
+textarea {
+  min-height: 92px;
+  resize: vertical;
+}
+
+.check-options,
+.bool-options {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 7px;
+}
+
+.pill-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 9px;
+  background: var(--option-bg);
+  font-weight: 800;
+  box-sizing: border-box;
+}
+
+.pill-option input {
+  width: 21px;
+  height: 21px;
+  min-height: 21px;
+  padding: 0;
+  flex: 0 0 21px;
+}
+
+.check-row,
+.form-row {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--field-card-bg);
+  padding: 10px;
+  margin-bottom: 10px;
+}
+.design-settings input[type="range"] {
+  min-height: auto;
+  padding: 0;
+}
+
+.design-settings input[type="color"] {
+  width: 72px;
+  min-height: 42px;
+  padding: 4px;
+}
+
 }
 
