@@ -642,22 +642,24 @@ footer {
     );
   }
 
-  details.section,
-  .indoor-card {
-    background: rgba(255, 255, 255, 0.76);
-  }
+details.section {
+  background: var(--section-bg);
+}
 
-  input,
-  select,
-  textarea {
-    background: var(--input-bg);
-  }
+.indoor-card {
+  background: var(--rack-card-bg);
+}
 
-  .check-row,
-  .form-row,
-  .signature-wrap {
-    background: rgba(255, 255, 255, 0.78);
-  }
+input,
+select,
+textarea {
+  background: var(--input-bg);
+}
+
+.check-row,
+.form-row,
+.signature-wrap {
+  background: var(--field-card-bg);
 }
 
 }
