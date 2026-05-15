@@ -1807,15 +1807,6 @@ function buildPrintCss() {
   ].join('');
 }
 
-async function ensurePdfLibrariesLoaded() {
-  if (window.html2canvas && window.jspdf && window.jspdf.jsPDF) {
-    return;
-  }
-
-  throw new Error(
-    'PDF-Bibliotheken html2canvas/jsPDF sind nicht geladen. Prüfe vendor/html2canvas.min.js und vendor/jspdf.umd.min.js.'
-  );
-}
 
 
 
