@@ -31,6 +31,19 @@
 --soft-glass: rgba(248, 250, 252, 0.72);
 --blue-glass: rgba(230, 241, 251, 0.78);
 
+/* Transparenz/Sättigung getrennt steuerbar */
+--section-bg: rgba(255, 255, 255, 0.62);
+--section-header-bg: rgba(248, 250, 252, 0.70);
+--section-header-open-bg: rgba(230, 241, 251, 0.76);
+
+--field-card-bg: rgba(255, 255, 255, 0.72);
+--input-bg: rgba(255, 255, 255, 0.68);
+--input-focus-bg: rgba(255, 255, 255, 0.94);
+--option-bg: rgba(248, 250, 252, 0.64);
+
+--rack-card-bg: rgba(255, 255, 255, 0.62);
+--rack-header-bg: rgba(230, 241, 251, 0.70);
+
 }
 
 html,
@@ -167,7 +180,7 @@ main {
 }
 
 details.section {
-  background: var(--card-glass);
+  background: var(--section-bg);
   border: 1px solid rgba(203, 213, 225, 0.88);
   border-radius: 14px;
   margin-bottom: 10px;
@@ -184,7 +197,7 @@ details.section > summary {
   padding: 14px;
   font-size: 17px;
   font-weight: 900;
-  background: rgba(248, 250, 252, 0.78);
+   background: var(--section-header-bg);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -192,7 +205,7 @@ details.section > summary {
 }
 
 details.section[open] > summary {
-  background: rgba(230, 241, 251, 0.82);
+   background: var(--section-header-open-bg);
   border-bottom: 1px solid var(--border);
 }
 
@@ -264,7 +277,7 @@ select:focus,
 textarea:focus {
   outline: 3px solid rgba(0, 92, 169, 0.22);
   border-color: var(--brand-dark);
-  background: var(--field-glass-focus);
+  background: var(--input-focus-bg);
 }
 
 .required-hint {
@@ -302,7 +315,7 @@ textarea:focus {
 .form-row {
   border: 1px solid var(--border);
   border-radius: 12px;
-   background: var(--card-glass-strong);
+   background: var(--field-card-bg);
   padding: 10px;
   margin-bottom: 10px;
 }
@@ -328,7 +341,7 @@ textarea:focus {
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 9px;
-   background: var(--soft-glass);
+   background: var(--option-bg);
   font-weight: 800;
 }
 
@@ -347,6 +360,7 @@ textarea:focus {
   backdrop-filter: blur(3px);
   -webkit-backdrop-filter: blur(3px);
   overflow: hidden;
+  
 }
 
 .indoor-card > summary {
@@ -355,7 +369,7 @@ textarea:focus {
   padding: 14px;
   font-size: 16px;
   font-weight: 900;
-   background: var(--blue-glass);
+   background: var(--rack-card-bg);
   border-bottom: 1px solid transparent;
 }
 
@@ -637,7 +651,7 @@ footer {
   input,
   select,
   textarea {
-    background: rgba(255, 255, 255, 0.66);
+    background: var(--input-bg);
   }
 
   .check-row,
