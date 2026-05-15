@@ -1807,6 +1807,75 @@ function buildPrintCss() {
   ].join('');
 }
 
+function loadExternalScriptOnce(src, globalCheck) {
+  return new Promise(function (resolve, reject) {
+    if (globalCheck && globalCheck()) {
+      resolve();
+      return;
+    }
+
+    var existing = document.querySelector('script[src="' + src + '"]');
+
+    if (existing) {
+      existing.addEventListener('load', function () {
+        if (!globalCheck || globalCheck()) {
+          resolve();
+        } else {
+          reject(new Error('Bibliothek wurde geladen, aber globale Variable fehlt: ' + src));
+        }
+      });
+
+      existing.addEventListener('error', function () {
+        reject(new Error('Bibliothek konnte nicht geladen werden: ' + src));
+      });
+
+      return;
+    }
+
+    var script = document.createElement('script');
+    script.src = src;
+    script.async = false;
+
+    script.onload = function () {
+      if (!globalCheck || globalCheck()) {
+        resolve();
+      } else {
+        reject(new Error('Bibliothek wurde geladen, aber globale Variable fehlt: ' + src));
+      }
+    };
+
+    script.onerror = function () {
+      reject(new Error('Bibliothek konnte nicht geladen werden: ' + src));
+    };
+
+    document.head.appendChild(script);
+  });
+}
+
+async function ensurePdfLibrariesLoaded() {
+  if (!window.html2canvas) {
+    await loadExternalScriptOnce(
+      'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
+      function () {
+        return !!window.html2canvas;
+      }
+    );
+  }
+
+  if (!window.jspdf || !window.jspdf.jsPDF) {
+    await loadExternalScriptOnce(
+      'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js',
+      function () {
+        return !!window.jspdf && !!window.jspdf.jsPDF;
+      }
+    );
+  }
+
+  if (!window.html2canvas || !window.jspdf || !window.jspdf.jsPDF) {
+    throw new Error('PDF-Bibliotheken html2canvas/jsPDF sind nicht geladen.');
+  }
+}
+
 async function generatePrintPdfBytes(data) {
   await ensurePdfLibrariesLoaded();
 
