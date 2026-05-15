@@ -505,7 +505,7 @@ canvas#betreiberSignatureCanvas {
 
 .photo-name {
   font-weight: 800;
-  color: var(--text);
+  color: var(--field-text-color);
   word-break: break-word;
 }
 

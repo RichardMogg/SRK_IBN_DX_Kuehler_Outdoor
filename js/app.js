@@ -2495,8 +2495,13 @@ var DEFAULT_DESIGN_SETTINGS = {
   field: 38,
   input: 86,
   overlay: 12,
+
   titleColor: '#3b82f6',
-  subtitleColor: '#93c5fd'
+  subtitleColor: '#93c5fd',
+  fieldLabelColor: '#111827',
+  fieldTextColor: '#111827',
+  sectionHeaderColor: '#ffffff',
+  sectionHeaderOpenColor: '#e6f1fb'
 };
 
 function initDesignSettings() {
@@ -2506,27 +2511,17 @@ function initDesignSettings() {
   setDesignSliderValues(settings);
 
   bindDesignSlider('opacitySection', 'section');
-  function bindDesignColor(elementId, key) {
-  var colorInput = document.getElementById(elementId);
-
-  if (!colorInput) {
-    return;
-  }
-
-  colorInput.addEventListener('input', function () {
-    var settings = loadDesignSettings();
-    settings[key] = colorInput.value;
-
-    saveDesignSettings(settings);
-    applyDesignSettings(settings);
-  });
-}
   bindDesignSlider('opacityHeader', 'header');
   bindDesignSlider('opacityField', 'field');
   bindDesignSlider('opacityInput', 'input');
   bindDesignSlider('opacityBgOverlay', 'overlay');
+
   bindDesignColor('colorSectionTitle', 'titleColor');
   bindDesignColor('colorSectionSubtitle', 'subtitleColor');
+  bindDesignColor('colorFieldLabel', 'fieldLabelColor');
+  bindDesignColor('colorFieldText', 'fieldTextColor');
+  bindDesignColor('colorSectionHeaderBg', 'sectionHeaderColor');
+  bindDesignColor('colorSectionHeaderOpenBg', 'sectionHeaderOpenColor');
 
   var resetButton = document.getElementById('resetDesignButton');
 
@@ -2554,6 +2549,7 @@ function bindDesignSlider(elementId, key) {
     applyDesignSettings(settings);
   });
 }
+
 function bindDesignColor(elementId, key) {
   var colorInput = document.getElementById(elementId);
 
@@ -2597,13 +2593,10 @@ function setDesignSliderValues(settings) {
 
   setColorValue('colorSectionTitle', settings.titleColor);
   setColorValue('colorSectionSubtitle', settings.subtitleColor);
-}
-function setColorValue(id, value) {
-  var element = document.getElementById(id);
-
-  if (element && value) {
-    element.value = value;
-  }
+  setColorValue('colorFieldLabel', settings.fieldLabelColor);
+  setColorValue('colorFieldText', settings.fieldTextColor);
+  setColorValue('colorSectionHeaderBg', settings.sectionHeaderColor);
+  setColorValue('colorSectionHeaderOpenBg', settings.sectionHeaderOpenColor);
 }
 
 function setSliderValue(id, value) {
@@ -2614,8 +2607,30 @@ function setSliderValue(id, value) {
   }
 }
 
+function setColorValue(id, value) {
+  var element = document.getElementById(id);
+
+  if (element && value) {
+    element.value = value;
+  }
+}
+
 function alpha(percent) {
   return Math.max(0, Math.min(100, Number(percent))) / 100;
+}
+
+function hexToRgba(hex, opacity) {
+  var value = String(hex || '').replace('#', '');
+
+  if (value.length !== 6) {
+    return 'rgba(255, 255, 255, ' + opacity + ')';
+  }
+
+  var r = parseInt(value.slice(0, 2), 16);
+  var g = parseInt(value.slice(2, 4), 16);
+  var b = parseInt(value.slice(4, 6), 16);
+
+  return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + opacity + ')';
 }
 
 function applyDesignSettings(settings) {
@@ -2628,8 +2643,16 @@ function applyDesignSettings(settings) {
   var overlayAlpha = alpha(settings.overlay);
 
   root.style.setProperty('--section-bg', 'rgba(255, 255, 255, ' + sectionAlpha + ')');
-  root.style.setProperty('--section-header-bg', 'rgba(255, 255, 255, ' + headerAlpha + ')');
-  root.style.setProperty('--section-header-open-bg', 'rgba(230, 241, 251, ' + headerAlpha + ')');
+
+  root.style.setProperty(
+    '--section-header-bg',
+    hexToRgba(settings.sectionHeaderColor || DEFAULT_DESIGN_SETTINGS.sectionHeaderColor, headerAlpha)
+  );
+
+  root.style.setProperty(
+    '--section-header-open-bg',
+    hexToRgba(settings.sectionHeaderOpenColor || DEFAULT_DESIGN_SETTINGS.sectionHeaderOpenColor, headerAlpha)
+  );
 
   root.style.setProperty('--field-card-bg', 'rgba(255, 255, 255, ' + fieldAlpha + ')');
   root.style.setProperty('--input-bg', 'rgba(255, 255, 255, ' + inputAlpha + ')');
@@ -2637,11 +2660,16 @@ function applyDesignSettings(settings) {
   root.style.setProperty('--option-bg', 'rgba(255, 255, 255, ' + fieldAlpha + ')');
 
   root.style.setProperty('--rack-card-bg', 'rgba(255, 255, 255, ' + sectionAlpha + ')');
-  root.style.setProperty('--rack-header-bg', 'rgba(255, 255, 255, ' + headerAlpha + ')');
+  root.style.setProperty(
+    '--rack-header-bg',
+    hexToRgba(settings.sectionHeaderColor || DEFAULT_DESIGN_SETTINGS.sectionHeaderColor, headerAlpha)
+  );
 
   root.style.setProperty('--bg-overlay-a', 'rgba(243, 246, 250, ' + Math.max(0, overlayAlpha - 0.04) + ')');
   root.style.setProperty('--bg-overlay-b', 'rgba(243, 246, 250, ' + overlayAlpha + ')');
-  
+
   root.style.setProperty('--section-title-color', settings.titleColor || DEFAULT_DESIGN_SETTINGS.titleColor);
   root.style.setProperty('--section-subtitle-color', settings.subtitleColor || DEFAULT_DESIGN_SETTINGS.subtitleColor);
+  root.style.setProperty('--field-label-color', settings.fieldLabelColor || DEFAULT_DESIGN_SETTINGS.fieldLabelColor);
+  root.style.setProperty('--field-text-color', settings.fieldTextColor || DEFAULT_DESIGN_SETTINGS.fieldTextColor);
 }
