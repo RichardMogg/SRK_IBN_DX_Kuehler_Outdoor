@@ -55,7 +55,19 @@
 --bg-overlay-a: rgba(243, 246, 250, 0.08);        /* Hintergrund-Schleier oben: Overlay über der Hintergrundgrafik */
 
 --bg-overlay-b: rgba(243, 246, 250, 0.14);        /* Hintergrund-Schleier unten: Overlay über der Hintergrundgrafik */
+/* Schriftfarben zentral steuerbar */
 
+--text: #111827;                         /* normale Schrift im Formular */
+--muted: #64748b;                        /* dezente Zusatztexte, Hinweise, summary-sub */
+
+--section-title-color: #0f172a;          /* Titel der Hauptabschnitte, z. B. „1. Stammdaten“ */
+--section-subtitle-color: #475569;       /* kleine Zusammenfassung unter dem Abschnittstitel */
+
+--field-label-color: #111827;            /* Label über Eingabefeldern, z. B. „Kunde“ */
+--field-text-color: #111827;             /* Text in Eingabefeldern */
+
+--button-text-color: #ffffff;            /* Schrift auf blauen Buttons */
+--button-light-text-color: #111827;      /* Schrift auf hellen Buttons */
 
 
 
@@ -214,6 +226,7 @@ details.section > summary {
   justify-content: space-between;
   align-items: center;
   gap: 10px;
+  color: var(--section-title-color);
 }
 
 details.section[open] > summary {
@@ -238,7 +251,7 @@ details.section[open] > summary::after {
   display: block;
   margin-top: 4px;
   font-size: 12px;
-  color: var(--muted);
+  color: var(--section-subtitle-color);
   font-weight: 700;
   line-height: 1.25;
 }
@@ -262,6 +275,9 @@ label {
   font-size: 14px;
   font-weight: 800;
   margin-bottom: 5px;
+  .form-title,
+.check-title {
+  color: var(--field-label-color);
 }
 
 input,
@@ -274,7 +290,7 @@ textarea {
   border-radius: 10px;
   font-size: 16px;
     background: var(--input-bg);
-  color: var(--text);
+  color: var(--field-text-color);
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
 }
@@ -291,6 +307,17 @@ textarea:focus {
   border-color: var(--brand-dark);
   background: var(--input-focus-bg);
 }
+
+.btn-brand,
+.btn-primary {
+  color: var(--button-text-color);
+}
+
+.btn-secondary,
+.btn-light {
+  color: var(--button-light-text-color);
+}
+
 
 .required-hint {
   color: var(--danger);
