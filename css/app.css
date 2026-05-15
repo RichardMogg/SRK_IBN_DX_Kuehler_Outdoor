@@ -276,7 +276,10 @@ label {
   font-size: 14px;
   font-weight: 800;
   margin-bottom: 5px;
-  .form-title,
+  color: var(--field-label-color);
+}
+
+.form-title,
 .check-title {
   color: var(--field-label-color);
 }
@@ -675,29 +678,32 @@ footer {
     max-width: 760px;
     margin: 0 auto;
   }
+}
+
 @media (max-width: 640px) {
   .page-bg::before {
-background: linear-gradient(180deg, var(--bg-overlay-a), var(--bg-overlay-b));
+    background: linear-gradient(180deg, var(--bg-overlay-a), var(--bg-overlay-b));
   }
 
-details.section {
-  background: var(--section-bg);
-}
+  details.section {
+    background: var(--section-bg);
+  }
 
-.indoor-card {
-  background: var(--rack-card-bg);
-}
+  .indoor-card {
+    background: var(--rack-card-bg);
+  }
 
-input,
-select,
-textarea {
-  background: var(--input-bg);
-}
+  input,
+  select,
+  textarea {
+    background: var(--input-bg);
+  }
 
-.check-row,
-.form-row,
-.signature-wrap {
-  background: var(--field-card-bg);
+  .check-row,
+  .form-row,
+  .signature-wrap {
+    background: var(--field-card-bg);
+  }
 }
 
 
