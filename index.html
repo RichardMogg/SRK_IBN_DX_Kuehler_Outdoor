@@ -22,6 +22,49 @@
   </header>
 
   <main>
+
+<details class="section" id="sectionDesignSettings">
+  <summary>
+    <span>
+      Darstellung / Transparenz
+      <span class="summary-sub">Hintergrund, Abschnitte und Felder einstellen</span>
+    </span>
+  </summary>
+
+  <div class="section-body design-settings">
+    <div class="grid">
+      <div class="field">
+        <label for="opacitySection">Hauptabschnitte</label>
+        <input id="opacitySection" type="range" min="0" max="100" value="34">
+      </div>
+
+      <div class="field">
+        <label for="opacityHeader">Abschnitt-Kopfzeilen</label>
+        <input id="opacityHeader" type="range" min="0" max="100" value="42">
+      </div>
+
+      <div class="field">
+        <label for="opacityField">Feldkarten</label>
+        <input id="opacityField" type="range" min="0" max="100" value="38">
+      </div>
+
+      <div class="field">
+        <label for="opacityInput">Eingabefelder</label>
+        <input id="opacityInput" type="range" min="0" max="100" value="86">
+      </div>
+
+      <div class="field">
+        <label for="opacityBgOverlay">Hintergrund-Schleier</label>
+        <input id="opacityBgOverlay" type="range" min="0" max="100" value="12">
+      </div>
+    </div>
+
+    <button type="button" class="btn-secondary" id="resetDesignButton">Darstellung zurücksetzen</button>
+  </div>
+</details>
+
+
+
     <div id="status" class="status"></div>
     <div id="editBanner" class="edit-banner"></div>
 

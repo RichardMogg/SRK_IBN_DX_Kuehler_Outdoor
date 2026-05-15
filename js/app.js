@@ -34,6 +34,7 @@ window.addEventListener('load', function () {
   setDefaultDateTime();
   loadRefrigerantOptions();
   bindEvents();
+  initDesignSettings();
   addCollapseButtons();
   initSignatureCanvas();
   initBetreiberSignatureCanvas();
@@ -2486,3 +2487,114 @@ function getErrorText(err) {
   return err.message || String(err);
 }
 
+var DESIGN_STORAGE_KEY = 'schrack_design_settings_v1';
+
+var DEFAULT_DESIGN_SETTINGS = {
+  section: 34,
+  header: 42,
+  field: 38,
+  input: 86,
+  overlay: 12
+};
+
+function initDesignSettings() {
+  var settings = loadDesignSettings();
+
+  applyDesignSettings(settings);
+  setDesignSliderValues(settings);
+
+  bindDesignSlider('opacitySection', 'section');
+  bindDesignSlider('opacityHeader', 'header');
+  bindDesignSlider('opacityField', 'field');
+  bindDesignSlider('opacityInput', 'input');
+  bindDesignSlider('opacityBgOverlay', 'overlay');
+
+  var resetButton = document.getElementById('resetDesignButton');
+
+  if (resetButton) {
+    resetButton.addEventListener('click', function () {
+      saveDesignSettings(DEFAULT_DESIGN_SETTINGS);
+      applyDesignSettings(DEFAULT_DESIGN_SETTINGS);
+      setDesignSliderValues(DEFAULT_DESIGN_SETTINGS);
+    });
+  }
+}
+
+function bindDesignSlider(elementId, key) {
+  var slider = document.getElementById(elementId);
+
+  if (!slider) {
+    return;
+  }
+
+  slider.addEventListener('input', function () {
+    var settings = loadDesignSettings();
+    settings[key] = Number(slider.value);
+
+    saveDesignSettings(settings);
+    applyDesignSettings(settings);
+  });
+}
+
+function loadDesignSettings() {
+  try {
+    var raw = localStorage.getItem(DESIGN_STORAGE_KEY);
+
+    if (!raw) {
+      return Object.assign({}, DEFAULT_DESIGN_SETTINGS);
+    }
+
+    return Object.assign({}, DEFAULT_DESIGN_SETTINGS, JSON.parse(raw));
+  } catch (err) {
+    return Object.assign({}, DEFAULT_DESIGN_SETTINGS);
+  }
+}
+
+function saveDesignSettings(settings) {
+  localStorage.setItem(DESIGN_STORAGE_KEY, JSON.stringify(settings));
+}
+
+function setDesignSliderValues(settings) {
+  setSliderValue('opacitySection', settings.section);
+  setSliderValue('opacityHeader', settings.header);
+  setSliderValue('opacityField', settings.field);
+  setSliderValue('opacityInput', settings.input);
+  setSliderValue('opacityBgOverlay', settings.overlay);
+}
+
+function setSliderValue(id, value) {
+  var element = document.getElementById(id);
+
+  if (element) {
+    element.value = value;
+  }
+}
+
+function alpha(percent) {
+  return Math.max(0, Math.min(100, Number(percent))) / 100;
+}
+
+function applyDesignSettings(settings) {
+  var root = document.documentElement;
+
+  var sectionAlpha = alpha(settings.section);
+  var headerAlpha = alpha(settings.header);
+  var fieldAlpha = alpha(settings.field);
+  var inputAlpha = alpha(settings.input);
+  var overlayAlpha = alpha(settings.overlay);
+
+  root.style.setProperty('--section-bg', 'rgba(255, 255, 255, ' + sectionAlpha + ')');
+  root.style.setProperty('--section-header-bg', 'rgba(255, 255, 255, ' + headerAlpha + ')');
+  root.style.setProperty('--section-header-open-bg', 'rgba(230, 241, 251, ' + headerAlpha + ')');
+
+  root.style.setProperty('--field-card-bg', 'rgba(255, 255, 255, ' + fieldAlpha + ')');
+  root.style.setProperty('--input-bg', 'rgba(255, 255, 255, ' + inputAlpha + ')');
+  root.style.setProperty('--input-focus-bg', 'rgba(255, 255, 255, ' + Math.min(1, inputAlpha + 0.12) + ')');
+  root.style.setProperty('--option-bg', 'rgba(255, 255, 255, ' + fieldAlpha + ')');
+
+  root.style.setProperty('--rack-card-bg', 'rgba(255, 255, 255, ' + sectionAlpha + ')');
+  root.style.setProperty('--rack-header-bg', 'rgba(255, 255, 255, ' + headerAlpha + ')');
+
+  root.style.setProperty('--bg-overlay-a', 'rgba(243, 246, 250, ' + Math.max(0, overlayAlpha - 0.04) + ')');
+  root.style.setProperty('--bg-overlay-b', 'rgba(243, 246, 250, ' + overlayAlpha + ')');
+}
