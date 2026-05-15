@@ -33,7 +33,7 @@
 
 /* Transparenz/Sättigung getrennt steuerbar */
 --section-bg: rgba(255, 255, 255, 0.05);
---field-card-bg: rgba(255, 255, 255, 0.74);
+--field-card-bg: rgba(255, 255, 255, 0.25);
 --input-bg: rgba(255, 255, 255, 0.68);
 --option-bg: rgba(248, 250, 252, 0.40);
 
