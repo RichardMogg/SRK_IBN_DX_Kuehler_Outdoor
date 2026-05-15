@@ -36,7 +36,7 @@
 
 --section-bg: rgba(90, 182, 243, 0.199);          /* Hauptabschnitte 1–17: Hintergrund der gesamten Abschnitts-Karte */
 
---section-header-bg: rgba(255, 255, 255, 0.35);   /* Kopfzeile geschlossener Abschnitte, z. B. „1. Stammdaten“ */
+--section-header-bg: rgba(255, 255, 255, 0.05);   /* Kopfzeile geschlossener Abschnitte, z. B. „1. Stammdaten“ */
 
 --section-header-open-bg: rgba(230, 241, 251, 0.2); /* Kopfzeile geöffneter Abschnitte */
 
