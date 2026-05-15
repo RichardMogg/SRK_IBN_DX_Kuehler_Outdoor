@@ -1808,60 +1808,118 @@ function buildPrintCss() {
 }
 
 async function generatePrintPdfBytes(data) {
-  if (!window.html2canvas || !window.jspdf || !window.jspdf.jsPDF) {
-    throw new Error('PDF-Bibliotheken html2canvas/jsPDF sind nicht geladen.');
-  }
-
   var holder = document.createElement('div');
   holder.style.position = 'fixed';
   holder.style.left = '-10000px';
   holder.style.top = '0';
   holder.style.width = '210mm';
+  holder.style.background = '#ffffff';
   holder.innerHTML = '<style>' + buildPrintCss() + '</style>' + buildPrintContent(data);
 
   document.body.appendChild(holder);
 
   try {
-    var pdf = new window.jspdf.jsPDF('p', 'mm', 'a4');
     var page = holder.querySelector('.print-page');
-    var canvas = await window.html2canvas(page, {
-      scale: 2,
-      backgroundColor: '#ffffff',
-      useCORS: true
-    });
 
-    var pageWidthMm = 210;
-    var pageHeightMm = 297;
-    var sliceHeightPx = Math.floor(canvas.width * pageHeightMm / pageWidthMm);
-    var y = 0;
-    var pageIndex = 0;
-
-    while (y < canvas.height) {
-      var currentSliceHeight = Math.min(sliceHeightPx, canvas.height - y);
-      var sliceCanvas = document.createElement('canvas');
-      var ctx = sliceCanvas.getContext('2d');
-
-      sliceCanvas.width = canvas.width;
-      sliceCanvas.height = currentSliceHeight;
-
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, sliceCanvas.width, sliceCanvas.height);
-      ctx.drawImage(canvas, 0, y, canvas.width, currentSliceHeight, 0, 0, canvas.width, currentSliceHeight);
-
-      var img = sliceCanvas.toDataURL('image/jpeg', 0.95);
-      var imgHeightMm = currentSliceHeight * pageWidthMm / canvas.width;
-
-      if (pageIndex > 0) {
-        pdf.addPage();
-      }
-
-      pdf.addImage(img, 'JPEG', 0, 0, pageWidthMm, imgHeightMm);
-
-      y += currentSliceHeight;
-      pageIndex += 1;
+    if (!page) {
+      throw new Error('PDF-Druckseite konnte nicht erstellt werden.');
     }
 
-    return new Uint8Array(pdf.output('arraybuffer'));
+    /*
+      Standardweg:
+      Bestehende Logik bleibt erhalten, wenn html2canvas + jsPDF geladen sind.
+    */
+    if (window.html2canvas && window.jspdf && window.jspdf.jsPDF) {
+      var pdf = new window.jspdf.jsPDF('p', 'mm', 'a4');
+      var canvas = await window.html2canvas(page, {
+        scale: 2,
+        backgroundColor: '#ffffff',
+        useCORS: true
+      });
+
+      var pageWidthMm = 210;
+      var pageHeightMm = 297;
+      var sliceHeightPx = Math.floor(canvas.width * pageHeightMm / pageWidthMm);
+      var y = 0;
+      var pageIndex = 0;
+
+      while (y < canvas.height) {
+        var currentSliceHeight = Math.min(sliceHeightPx, canvas.height - y);
+        var sliceCanvas = document.createElement('canvas');
+        var ctx = sliceCanvas.getContext('2d');
+
+        sliceCanvas.width = canvas.width;
+        sliceCanvas.height = currentSliceHeight;
+
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, sliceCanvas.width, sliceCanvas.height);
+        ctx.drawImage(
+          canvas,
+          0,
+          y,
+          canvas.width,
+          currentSliceHeight,
+          0,
+          0,
+          canvas.width,
+          currentSliceHeight
+        );
+
+        var img = sliceCanvas.toDataURL('image/jpeg', 0.95);
+        var imgHeightMm = currentSliceHeight * pageWidthMm / canvas.width;
+
+        if (pageIndex > 0) {
+          pdf.addPage();
+        }
+
+        pdf.addImage(img, 'JPEG', 0, 0, pageWidthMm, imgHeightMm);
+
+        y += currentSliceHeight;
+        pageIndex += 1;
+      }
+
+      return new Uint8Array(pdf.output('arraybuffer'));
+    }
+
+    /*
+      Fallback:
+      Wenn die Einzelbibliotheken nicht geladen sind,
+      wird das vorhandene lokale html2pdf-Bundle verwendet.
+      Die Quelle bleibt dieselbe Druckansicht.
+    */
+    if (window.html2pdf) {
+      var arrayBuffer = await window.html2pdf()
+        .set({
+          margin: 0,
+          filename: 'protokoll.pdf',
+          image: {
+            type: 'jpeg',
+            quality: 0.95
+          },
+          html2canvas: {
+            scale: 2,
+            backgroundColor: '#ffffff',
+            useCORS: true
+          },
+          jsPDF: {
+            unit: 'mm',
+            format: 'a4',
+            orientation: 'portrait'
+          },
+          pagebreak: {
+            mode: ['css', 'legacy']
+          }
+        })
+        .from(page)
+        .toPdf()
+        .outputPdf('arraybuffer');
+
+      return new Uint8Array(arrayBuffer);
+    }
+
+    throw new Error(
+      'PDF-Bibliotheken nicht geladen. Erwartet wird html2canvas/jsPDF oder vendor/html2pdf.bundle.min.js.'
+    );
   } finally {
     document.body.removeChild(holder);
   }
