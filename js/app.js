@@ -1854,27 +1854,19 @@ function loadExternalScriptOnce(src, globalCheck) {
 
 
 async function ensurePdfLibrariesLoaded() {
-  if (!window.html2canvas) {
-    await loadExternalScriptOnce(
-      'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
-      function () {
-        return !!window.html2canvas;
-      }
-    );
+  if (window.html2canvas && window.jspdf && window.jspdf.jsPDF) {
+    return;
   }
 
-  if (!window.jspdf || !window.jspdf.jsPDF) {
-    await loadExternalScriptOnce(
-      'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js',
-      function () {
-        return !!window.jspdf && !!window.jspdf.jsPDF;
-      }
-    );
+  await new Promise(function (resolve) {
+    setTimeout(resolve, 300);
+  });
+
+  if (window.html2canvas && window.jspdf && window.jspdf.jsPDF) {
+    return;
   }
 
-  if (!window.html2canvas || !window.jspdf || !window.jspdf.jsPDF) {
-    throw new Error('PDF-Bibliotheken html2canvas/jsPDF sind nicht geladen.');
-  }
+  throw new Error('PDF-Bibliotheken html2canvas/jsPDF sind nicht geladen.');
 }
 
 async function generatePrintPdfBytes(data) {
@@ -1911,7 +1903,6 @@ async function generatePrintPdfBytes(data) {
 
     var pageWidthMm = 210;
     var pageHeightMm = 297;
-
     var sliceHeightPx = Math.floor(canvas.width * pageHeightMm / pageWidthMm);
     var y = 0;
     var pageIndex = 0;
