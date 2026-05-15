@@ -69,7 +69,8 @@
 --button-text-color: #ffffff;            /* Schrift auf blauen Buttons */
 --button-light-text-color: #111827;      /* Schrift auf hellen Buttons */
 
-
+--section-title-color: #3b82f6;      /* Schrift Haupttitel der Abschnitte */
+--section-subtitle-color: #93c5fd;   /* Schrift Untertitel / summary-sub */
 
 
 }
@@ -240,7 +241,7 @@ details.section > summary::-webkit-details-marker {
 
 details.section > summary::after {
   content: "▶";
-  color: var(--brand-dark);
+  color: var(--section-title-color);
 }
 
 details.section[open] > summary::after {

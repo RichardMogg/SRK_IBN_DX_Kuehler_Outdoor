@@ -2494,7 +2494,9 @@ var DEFAULT_DESIGN_SETTINGS = {
   header: 42,
   field: 38,
   input: 86,
-  overlay: 12
+  overlay: 12,
+  titleColor: '#3b82f6',
+  subtitleColor: '#93c5fd'
 };
 
 function initDesignSettings() {
@@ -2504,10 +2506,27 @@ function initDesignSettings() {
   setDesignSliderValues(settings);
 
   bindDesignSlider('opacitySection', 'section');
+  function bindDesignColor(elementId, key) {
+  var colorInput = document.getElementById(elementId);
+
+  if (!colorInput) {
+    return;
+  }
+
+  colorInput.addEventListener('input', function () {
+    var settings = loadDesignSettings();
+    settings[key] = colorInput.value;
+
+    saveDesignSettings(settings);
+    applyDesignSettings(settings);
+  });
+}
   bindDesignSlider('opacityHeader', 'header');
   bindDesignSlider('opacityField', 'field');
   bindDesignSlider('opacityInput', 'input');
   bindDesignSlider('opacityBgOverlay', 'overlay');
+  bindDesignColor('colorSectionTitle', 'titleColor');
+  bindDesignColor('colorSectionSubtitle', 'subtitleColor');
 
   var resetButton = document.getElementById('resetDesignButton');
 
@@ -2530,6 +2549,21 @@ function bindDesignSlider(elementId, key) {
   slider.addEventListener('input', function () {
     var settings = loadDesignSettings();
     settings[key] = Number(slider.value);
+
+    saveDesignSettings(settings);
+    applyDesignSettings(settings);
+  });
+}
+function bindDesignColor(elementId, key) {
+  var colorInput = document.getElementById(elementId);
+
+  if (!colorInput) {
+    return;
+  }
+
+  colorInput.addEventListener('input', function () {
+    var settings = loadDesignSettings();
+    settings[key] = colorInput.value;
 
     saveDesignSettings(settings);
     applyDesignSettings(settings);
@@ -2560,6 +2594,16 @@ function setDesignSliderValues(settings) {
   setSliderValue('opacityField', settings.field);
   setSliderValue('opacityInput', settings.input);
   setSliderValue('opacityBgOverlay', settings.overlay);
+
+  setColorValue('colorSectionTitle', settings.titleColor);
+  setColorValue('colorSectionSubtitle', settings.subtitleColor);
+}
+function setColorValue(id, value) {
+  var element = document.getElementById(id);
+
+  if (element && value) {
+    element.value = value;
+  }
 }
 
 function setSliderValue(id, value) {
@@ -2597,4 +2641,7 @@ function applyDesignSettings(settings) {
 
   root.style.setProperty('--bg-overlay-a', 'rgba(243, 246, 250, ' + Math.max(0, overlayAlpha - 0.04) + ')');
   root.style.setProperty('--bg-overlay-b', 'rgba(243, 246, 250, ' + overlayAlpha + ')');
+  
+  root.style.setProperty('--section-title-color', settings.titleColor || DEFAULT_DESIGN_SETTINGS.titleColor);
+  root.style.setProperty('--section-subtitle-color', settings.subtitleColor || DEFAULT_DESIGN_SETTINGS.subtitleColor);
 }
