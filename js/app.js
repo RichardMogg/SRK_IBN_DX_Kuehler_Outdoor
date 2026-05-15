@@ -1807,50 +1807,6 @@ function buildPrintCss() {
   ].join('');
 }
 
-function loadExternalScriptOnce(src, globalCheck) {
-  return new Promise(function (resolve, reject) {
-    if (globalCheck && globalCheck()) {
-      resolve();
-      return;
-    }
-
-    var existing = document.querySelector('script[src="' + src + '"]');
-
-    if (existing) {
-      existing.addEventListener('load', function () {
-        if (!globalCheck || globalCheck()) {
-          resolve();
-        } else {
-          reject(new Error('Bibliothek wurde geladen, aber globale Variable fehlt: ' + src));
-        }
-      });
-
-      existing.addEventListener('error', function () {
-        reject(new Error('Bibliothek konnte nicht geladen werden: ' + src));
-      });
-
-      return;
-    }
-
-    var script = document.createElement('script');
-    script.src = src;
-    script.async = false;
-
-    script.onload = function () {
-      if (!globalCheck || globalCheck()) {
-        resolve();
-      } else {
-        reject(new Error('Bibliothek wurde geladen, aber globale Variable fehlt: ' + src));
-      }
-    };
-
-    script.onerror = function () {
-      reject(new Error('Bibliothek konnte nicht geladen werden: ' + src));
-    };
-
-    document.head.appendChild(script);
-  });
-}
 
 async function ensurePdfLibrariesLoaded() {
   if (!window.html2canvas) {
