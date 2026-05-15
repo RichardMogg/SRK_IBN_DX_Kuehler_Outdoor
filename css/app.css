@@ -413,7 +413,7 @@ textarea:focus {
   padding: 14px;
   font-size: 16px;
   font-weight: 900;
-   background: var(--rack-card-bg);
+  background: var(--rack-header-bg);
   border-bottom: 1px solid transparent;
 }
 
@@ -706,7 +706,6 @@ footer {
   }
 }
 
-
 /* Wiederherstellung Feldgrößen / Auswahlfelder */
 input,
 select,
@@ -718,7 +717,7 @@ textarea {
   border-radius: 10px;
   font-size: 16px;
   background: var(--input-bg);
-  color: var(--text);
+  color: var(--field-text-color);
   box-sizing: border-box;
 }
 
@@ -732,6 +731,13 @@ textarea {
   display: grid;
   grid-template-columns: 1fr;
   gap: 7px;
+}
+
+@media (min-width: 760px) {
+  .check-options,
+  .bool-options {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 .pill-option {
@@ -763,6 +769,11 @@ textarea {
   padding: 10px;
   margin-bottom: 10px;
 }
+
+.signature-wrap {
+  background: var(--field-card-bg);
+}
+
 .design-settings input[type="range"] {
   min-height: auto;
   padding: 0;
@@ -774,5 +785,5 @@ textarea {
   padding: 4px;
 }
 
-}
+
 
