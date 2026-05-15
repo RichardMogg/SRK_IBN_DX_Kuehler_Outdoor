@@ -6,7 +6,7 @@
   --bg: #f3f6fa;
   --card: #ffffff;
   --text: #111827;
-  --muted: #64748b;
+  --muted: #5d6877;
   --border: #cbd5e1;
   --brand: #005ca9;
   --brand-dark: #003f75;
@@ -32,17 +32,29 @@
 --blue-glass: rgba(230, 241, 251, 0.78);
 
 /* Transparenz/Sättigung getrennt steuerbar */
---section-bg: rgba(255, 255, 255, 0.34);
---section-header-bg: rgba(255, 255, 255, 0.42);
---section-header-open-bg: rgba(230, 241, 251, 0.50);
---field-card-bg: rgba(255, 255, 255, 0.38);
---input-bg: rgba(255, 255, 255, 0.86);
---input-focus-bg: rgba(255, 255, 255, 0.98);
---option-bg: rgba(255, 255, 255, 0.42);
---rack-card-bg: rgba(255, 255, 255, 0.34);
---rack-header-bg: rgba(255, 255, 255, 0.42);
---bg-overlay-a: rgba(243, 246, 250, 0.08);
---bg-overlay-b: rgba(243, 246, 250, 0.14);
+/* Transparenz/Sättigung getrennt steuerbar */
+
+--section-bg: rgba(90, 182, 243, 0.199);          /* Hauptabschnitte 1–17: Hintergrund der gesamten Abschnitts-Karte */
+
+--section-header-bg: rgba(255, 255, 255, 0.42);   /* Kopfzeile geschlossener Abschnitte, z. B. „1. Stammdaten“ */
+
+--section-header-open-bg: rgba(230, 241, 251, 0.50); /* Kopfzeile geöffneter Abschnitte */
+
+--field-card-bg: rgba(255, 255, 255, 0.38);       /* Feldkarten innerhalb der Abschnitte, z. B. Ja/Nein-Blöcke oder Prüfpunkt-Zeilen */
+
+--input-bg: rgba(255, 255, 255, 0.86);            /* Eingabefelder: input, select und textarea */
+
+--input-focus-bg: rgba(255, 255, 255, 0.98);      /* Eingabefelder, wenn sie aktiv/fokussiert sind */
+
+--option-bg: rgba(255, 255, 255, 0.42);           /* Auswahlflächen, z. B. Ja/Nein-Optionen */
+
+--rack-card-bg: rgba(255, 255, 255, 0.34);        /* Rackkühlgerät-Karten im Abschnitt 4 */
+
+--rack-header-bg: rgba(255, 255, 255, 0.42);      /* Kopfzeile der Rackkühlgerät-Karten */
+
+--bg-overlay-a: rgba(243, 246, 250, 0.08);        /* Hintergrund-Schleier oben: Overlay über der Hintergrundgrafik */
+
+--bg-overlay-b: rgba(243, 246, 250, 0.14);        /* Hintergrund-Schleier unten: Overlay über der Hintergrundgrafik */
 
 
 
