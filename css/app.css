@@ -32,10 +32,10 @@
 --blue-glass: rgba(230, 241, 251, 0.78);
 
 /* Transparenz/Sättigung getrennt steuerbar */
---section-bg: rgba(255, 255, 255, 0.1);
---field-card-bg: rgba(255, 255, 255, 0.2);
---input-bg: rgba(255, 255, 255, 0.2);
---option-bg: rgba(248, 250, 252, 0.2);
+--section-bg: rgba(255, 255, 255, 0.25);
+--field-card-bg: rgba(255, 255, 255, 0.25);
+--input-bg: rgba(255, 255, 255, 0.55);
+--option-bg: rgba(248, 250, 252, 0.25);
 
 --section-header-bg: rgba(2, 13, 24, 0.7);
 --section-header-open-bg: rgba(230, 241, 251, 0.76);
