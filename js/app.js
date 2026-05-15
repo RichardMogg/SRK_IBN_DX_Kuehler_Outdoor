@@ -1820,41 +1820,27 @@ async function ensurePdfLibrariesLoaded() {
 
 
 async function generatePrintPdfBytes(data) {
-  await ensurePdfLibrariesLoaded();
+  if (!window.html2canvas || !window.jspdf || !window.jspdf.jsPDF) {
+    throw new Error('PDF-Bibliotheken html2canvas/jsPDF sind nicht geladen.');
+  }
 
   var holder = document.createElement('div');
   holder.style.position = 'fixed';
   holder.style.left = '-10000px';
   holder.style.top = '0';
   holder.style.width = '210mm';
-  holder.style.background = '#ffffff';
   holder.innerHTML = '<style>' + buildPrintCss() + '</style>' + buildPrintContent(data);
 
   document.body.appendChild(holder);
 
   try {
-    var page = holder.querySelector('.print-page');
-
-    if (!page) {
-      throw new Error('PDF-Druckseite konnte nicht erstellt werden.');
-    }
-
-    await new Promise(function (resolve) {
-      requestAnimationFrame(function () {
-        requestAnimationFrame(resolve);
-      });
-    });
-
     var pdf = new window.jspdf.jsPDF('p', 'mm', 'a4');
+    var page = holder.querySelector('.print-page');
 
     var canvas = await window.html2canvas(page, {
       scale: 2,
       backgroundColor: '#ffffff',
-      useCORS: true,
-      scrollX: 0,
-      scrollY: 0,
-      windowWidth: page.scrollWidth,
-      windowHeight: page.scrollHeight
+      useCORS: true
     });
 
     var pageWidthMm = 210;
@@ -1865,7 +1851,6 @@ async function generatePrintPdfBytes(data) {
 
     while (y < canvas.height) {
       var currentSliceHeight = Math.min(sliceHeightPx, canvas.height - y);
-
       var sliceCanvas = document.createElement('canvas');
       var ctx = sliceCanvas.getContext('2d');
 
@@ -1874,7 +1859,6 @@ async function generatePrintPdfBytes(data) {
 
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, sliceCanvas.width, sliceCanvas.height);
-
       ctx.drawImage(
         canvas,
         0,
