@@ -817,6 +817,30 @@ input[type="month"] {
   min-height: 42px;
   padding: 4px;
 }
+/* Mobile Fix für Datum- und Uhrzeitfelder */
+@media (max-width: 640px) {
+  .grid,
+  .field,
+  .section-body {
+    min-width: 0;
+    max-width: 100%;
+  }
 
+  input[type="date"],
+  input[type="datetime-local"] {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+
+    font-size: 14px;
+    padding-left: 6px;
+    padding-right: 6px;
+
+    -webkit-appearance: none;
+    appearance: none;
+  }
+}
 
 
