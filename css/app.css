@@ -819,7 +819,9 @@ input[type="month"] {
 }
 /* Mobile Fix für Datum- und Uhrzeitfelder */
 @media (max-width: 640px) {
-  .grid,
+   .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
   .field,
   .section-body {
     min-width: 0;
