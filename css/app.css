@@ -778,7 +778,39 @@ textarea {
   min-height: auto;
   padding: 0;
 }
+/* Mobile Korrektur: Datumsfelder dürfen nicht über den Abschnitt hinauslaufen */
+.grid,
+.field,
+.input-unit {
+  min-width: 0;
+}
 
+input,
+select,
+textarea {
+  max-width: 100%;
+}
+
+input[type="date"],
+input[type="datetime-local"],
+input[type="time"],
+input[type="month"] {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+@media (max-width: 640px) {
+  input[type="date"],
+  input[type="datetime-local"],
+  input[type="time"],
+  input[type="month"] {
+    font-size: 15px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+}
 .design-settings input[type="color"] {
   width: 72px;
   min-height: 42px;
